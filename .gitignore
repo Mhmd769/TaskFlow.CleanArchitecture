@@ -1,0 +1,28 @@
+# Build files
+bin/
+obj/
+
+# User-specific files
+*.user
+*.vspscc
+*.suo
+.vs/
+
+# Logs
+*.log
+
+# Visual Studio files
+.vscode/
+
+# Dotnet artifacts
+project.lock.json
+*.ide/
+*.csproj.user
+*.dbmdl
+
+# Docker
+docker-compose.override.yml
+
+# Sensitive files
+appsettings.Development.json
+appsettings.Local.json

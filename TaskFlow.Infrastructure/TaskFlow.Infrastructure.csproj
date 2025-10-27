@@ -22,7 +22,6 @@
     <Folder Include="Logging\" />
     <Folder Include="Identity\" />
     <Folder Include="Notifications\" />
-    <Folder Include="Persistence\" />
   </ItemGroup>
 
   <PropertyGroup>

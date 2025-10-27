@@ -1,4 +1,4 @@
-# Build files
+# Build directories
 bin/
 obj/
 
@@ -7,12 +7,10 @@ obj/
 *.vspscc
 *.suo
 .vs/
+.vscode/
 
 # Logs
 *.log
-
-# Visual Studio files
-.vscode/
 
 # Dotnet artifacts
 project.lock.json
@@ -20,9 +18,36 @@ project.lock.json
 *.csproj.user
 *.dbmdl
 
-# Docker
+# Docker overrides
 docker-compose.override.yml
 
-# Sensitive files
+# Sensitive configuration files
+appsettings.json
 appsettings.Development.json
 appsettings.Local.json
+appsettings.*.json
+
+# Entity Framework Migrations (handled locally per dev)
+**/Migrations/
+
+# Environment files
+.env
+
+# Temporary files
+*.tmp
+*.temp
+
+# JetBrains Rider / ReSharper
+.idea/
+*.DotSettings.user
+
+# Publish output
+*.publishsettings
+*.pubxml
+*.pubxml.user
+
+# Other OS / Editor files
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+.DS_Store

@@ -5,15 +5,16 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="BCrypt.Net-Next" Version="4.0.3" />
     <PackageReference Include="FluentValidation" Version="12.0.0" />
     <PackageReference Include="MediatR" Version="13.0.0" />
+    <PackageReference Include="Portable.BouncyCastle" Version="1.9.0" />
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Features\" />
     <Folder Include="Behaviors\" />
     <Folder Include="Common\" />
-    <Folder Include="DTOs\" />
+    <Folder Include="Features\Project\Queries\" />
   </ItemGroup>
 
   <PropertyGroup>

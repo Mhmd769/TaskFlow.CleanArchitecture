@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace TaskFlow.Application.DTOs
+namespace TaskFlow.Application.DTOs.UserDTOs
 {
     public class CreateUserDto
     {

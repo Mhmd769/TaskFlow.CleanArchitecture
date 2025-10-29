@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using TaskFlow.Application.DTOs;
+using TaskFlow.Application.DTOs.ProjectDTOs;
 
 namespace TaskFlow.Application.Features.Project.Command.CreateProject
 {

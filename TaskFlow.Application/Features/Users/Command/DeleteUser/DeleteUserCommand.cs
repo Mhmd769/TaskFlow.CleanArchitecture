@@ -6,10 +6,10 @@ using System.Text;
 using System.Threading.Tasks;
 using TaskFlow.Application.DTOs.UserDTOs;
 
-namespace TaskFlow.Application.Features.Users.Queries.GetUserById
+namespace TaskFlow.Application.Features.Users.Command.DeleteUser
 {
-    public class GetUserByIdQuery : IRequest<UserDto>
+    public class DeleteUserCommand : IRequest <UserDto>
     {
-        public Guid UserId { get; set; }
+        public Guid userid { get; set; }
     }
 }

@@ -20,10 +20,11 @@ public class GenericRepository<T> : IRepository<T> where T : class
         return await _dbSet.FindAsync(id);
     }
 
-    public async Task<IEnumerable<T>> GetAllAsync()
+    public IQueryable<T> GetAll()
     {
-        return await _dbSet.ToListAsync();
+        return _dbSet.AsNoTracking();
     }
+
 
     public async Task AddAsync(T entity)
     {

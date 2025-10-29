@@ -1,5 +1,5 @@
 ﻿using FluentValidation;
-using TaskFlow.Application.DTOs;
+using TaskFlow.Application.DTOs.UserDTOs;
 
 namespace TaskFlow.Application.Features.Users.Command.CreateUser
 {

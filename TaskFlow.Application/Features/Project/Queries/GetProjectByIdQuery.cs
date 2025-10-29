@@ -6,10 +6,10 @@ using System.Text;
 using System.Threading.Tasks;
 using TaskFlow.Application.DTOs.ProjectDTOs;
 
-namespace TaskFlow.Application.Features.Project.Command.CreateProject
+namespace TaskFlow.Application.Features.Project.Queries
 {
-    public class CreateProjectCommand : IRequest<ProjectDto>
+    public class GetProjectByIdQuery : IRequest<ProjectDto>
     {
-        public CreateProjectDto Project { get; set; } = null!;
+        public Guid ProjectId { get; set; }
     }
 }

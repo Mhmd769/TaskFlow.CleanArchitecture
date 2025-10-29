@@ -1,6 +1,9 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using TaskFlow.Application.Mappings;
 using TaskFlow.Domain.Interfaces;
-using TaskFlow.Infrastructure.Persistence; // Ensure this using directive is present
+using TaskFlow.Infrastructure.Persistence;
+using MediatR;
+using AutoMapper;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -10,11 +13,17 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 // 🔹 Register DbContext
-// Ensure the Microsoft.EntityFrameworkCore.SqlServer package is installed
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+
+// 🔹 Register UnitOfWork
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 
+// 🔹 Register MediatR
+builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(Program).Assembly));
+
+// 🔹 Register AutoMapper
+builder.Services.AddAutoMapper(cfg => cfg.AddMaps(typeof(UserMappingProfile).Assembly));
 
 var app = builder.Build();
 

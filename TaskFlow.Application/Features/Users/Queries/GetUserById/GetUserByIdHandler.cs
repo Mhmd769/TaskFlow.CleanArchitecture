@@ -1,10 +1,6 @@
-﻿using MediatR;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using TaskFlow.Application.DTOs;
+﻿using AutoMapper;
+using MediatR;
+using TaskFlow.Application.DTOs.UserDTOs;
 using TaskFlow.Domain.Interfaces;
 
 namespace TaskFlow.Application.Features.Users.Queries.GetUserById
@@ -12,23 +8,21 @@ namespace TaskFlow.Application.Features.Users.Queries.GetUserById
     public class GetUserByIdHandler : IRequestHandler<GetUserByIdQuery, UserDto>
     {
         private readonly IUnitOfWork _unitOfWork;
+        private readonly IMapper _mapper;
 
-        public GetUserByIdHandler(IUnitOfWork unitOfWork)
+        public GetUserByIdHandler(IUnitOfWork unitOfWork, IMapper mapper)
         {
             _unitOfWork = unitOfWork;
+            _mapper = mapper;
         }
 
         public async Task<UserDto> Handle(GetUserByIdQuery request, CancellationToken cancellationToken)
         {
             var user = await _unitOfWork.Users.GetByIdAsync(request.UserId);
-            if (user == null) throw new Exception("User not found");
+            if (user == null)
+                throw new Exception("User not found");
 
-            return new UserDto
-            {
-                Id = user.Id,
-                Username = user.Username,
-                Email = user.Email
-            };
+            return _mapper.Map<UserDto>(user);
         }
     }
 }

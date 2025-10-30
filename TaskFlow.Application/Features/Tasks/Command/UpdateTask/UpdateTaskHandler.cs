@@ -20,9 +20,22 @@ namespace TaskFlow.Application.Features.Tasks.Command.UpdateTask
             _unitOfWork = unitOfWork;
             _mapper = mapper;
         }
-        public Task<TaskDto> Handle(UpdateTaskCommand request, CancellationToken cancellationToken)
+        public async Task<TaskDto> Handle(UpdateTaskCommand request, CancellationToken cancellationToken)
         {
-            throw new NotImplementedException();
+            var existingtask = await _unitOfWork.Tasks.GetByIdAsync(request.Task.Id);
+
+            if (existingtask != null)
+            {
+                throw new Exception("Task not found");
+            }
+            _mapper.Map(request.Task, existingtask);
+
+            _unitOfWork.Tasks.Update(existingtask);
+
+            await _unitOfWork.SaveAsync();
+
+            return _mapper.Map<TaskDto>(existingtask);
+
         }
     }
 }

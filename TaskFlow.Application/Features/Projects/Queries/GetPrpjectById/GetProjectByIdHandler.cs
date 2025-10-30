@@ -1,4 +1,5 @@
-﻿using MediatR;
+﻿using AutoMapper;
+using MediatR;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,30 +8,23 @@ using System.Threading.Tasks;
 using TaskFlow.Application.DTOs.ProjectDTOs;
 using TaskFlow.Domain.Interfaces;
 
-namespace TaskFlow.Application.Features.Project.Queries
+namespace TaskFlow.Application.Features.Projects.Queries.GetPrpjectById
 {
     public class GetProjectByIdHandler :IRequestHandler<GetProjectByIdQuery, ProjectDto>
     {
         private readonly IUnitOfWork _unitOfWork;
+        private readonly IMapper _mapper;
 
-        public GetProjectByIdHandler(IUnitOfWork unitOfWork)
+        public GetProjectByIdHandler(IUnitOfWork unitOfWork, IMapper mapper)
         {
             _unitOfWork = unitOfWork;
+            _mapper = mapper;
         }
-
         public async Task<ProjectDto> Handle(GetProjectByIdQuery request, CancellationToken cancellationToken)
         {
             var project = await _unitOfWork.Projects.GetByIdAsync(request.ProjectId);
             if (project == null) throw new Exception("Project not found");
-            return new ProjectDto
-            {
-                Id = project.Id,
-                Name = project.Name,
-                Description = project.Description,
-                CreatedAt = project.CreatedAt,
-                OwnerName=project.Owner.Username,
-                TaskCount = project.Tasks.Count
-            };
+            return _mapper.Map<ProjectDto>(project);
         }
     }
 }

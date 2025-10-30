@@ -6,10 +6,9 @@ using System.Text;
 using System.Threading.Tasks;
 using TaskFlow.Application.DTOs.ProjectDTOs;
 
-namespace TaskFlow.Application.Features.Project.Command.CreateProject
+namespace TaskFlow.Application.Features.Projects.Queries.GetAllProjects
 {
-    public class CreateProjectCommand : IRequest<ProjectDto>
+    public class GetAllProjectsQuery :IRequest<List<ProjectDto>>
     {
-        public CreateProjectDto Project { get; set; } = null!;
     }
 }

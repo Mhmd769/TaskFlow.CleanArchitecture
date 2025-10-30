@@ -1,22 +1,22 @@
-﻿using MediatR;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using AutoMapper;
+using MediatR;
+using System.Threading;
 using System.Threading.Tasks;
 using TaskFlow.Application.DTOs.ProjectDTOs;
 using TaskFlow.Domain.Entities;
 using TaskFlow.Domain.Interfaces;
 
-namespace TaskFlow.Application.Features.Project.Command.CreateProject
+namespace TaskFlow.Application.Features.Projects.Command.CreateProject
 {
     public class CreateProjectHandler : IRequestHandler<CreateProjectCommand, ProjectDto>
     {
         private readonly IUnitOfWork _unitOfWork;
+        private readonly IMapper _mapper;
 
-        public CreateProjectHandler(IUnitOfWork unitOfWork)
+        public CreateProjectHandler(IUnitOfWork unitOfWork, IMapper mapper)
         {
             _unitOfWork = unitOfWork;
+            _mapper = mapper;
         }
 
         public async Task<ProjectDto> Handle(CreateProjectCommand request, CancellationToken cancellationToken)
@@ -24,22 +24,12 @@ namespace TaskFlow.Application.Features.Project.Command.CreateProject
             var owner = await _unitOfWork.Users.GetByIdAsync(request.Project.OwnerId);
             if (owner == null) throw new Exception("Owner not found");
 
-            var project = new Domain.Entities.Project
-            {
-                Name = request.Project.Name,
-                Description = request.Project.Description,
-                Owner = owner
-            };
+            var project = _mapper.Map<Domain.Entities.Project>(request.Project); // ✅ Works now
 
             await _unitOfWork.Projects.AddAsync(project);
             await _unitOfWork.SaveAsync();
 
-            return new ProjectDto
-            {
-                Id = project.Id,
-                Name = project.Name,
-                Description = project.Description
-            };
+            return _mapper.Map<ProjectDto>(project);
         }
     }
 }

@@ -4,6 +4,8 @@ using TaskFlow.Domain.Interfaces;
 using TaskFlow.Infrastructure.Persistence;
 using MediatR;
 using AutoMapper;
+using FluentValidation;
+using FluentValidation.AspNetCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -24,6 +26,16 @@ builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(Progr
 
 // 🔹 Register AutoMapper
 builder.Services.AddAutoMapper(cfg => cfg.AddMaps(typeof(UserMappingProfile).Assembly));
+
+// 🔹 Register FluentValidation
+builder.Services.AddValidatorsFromAssembly(typeof(CreateUserCommandValidator).Assembly);
+builder.Services.AddValidatorsFromAssembly(typeof(CreateTaskCommandValidator).Assembly);
+builder.Services.AddValidatorsFromAssembly(typeof(CreateProjectCommandValidator).Assembly);
+
+builder.Services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationBehavior<,>));
+
+builder.Services.AddFluentValidationAutoValidation();
+builder.Services.AddFluentValidationClientsideAdapters();
 
 var app = builder.Build();
 

@@ -13,5 +13,8 @@ namespace TaskFlow.Application.Features.Users.Command.CreateUser
     public class CreateUserCommand : IRequest<UserDto>
     {
         public CreateUserDto User { get; set; } = null!;
+
+        public CreateUserCommand(CreateUserDto dto) {
+        }
     }
 }

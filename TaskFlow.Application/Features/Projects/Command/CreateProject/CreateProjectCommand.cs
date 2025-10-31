@@ -10,6 +10,13 @@ namespace TaskFlow.Application.Features.Projects.Command.CreateProject
 {
     public class CreateProjectCommand : IRequest<ProjectDto>
     {
+        private CreateProjectDto dto;
+
+        public CreateProjectCommand(CreateProjectDto dto)
+        {
+            this.dto = dto;
+        }
+
         public CreateProjectDto Project { get; set; } = null!;
     }
 }

@@ -6,6 +6,8 @@ using MediatR;
 using AutoMapper;
 using FluentValidation;
 using FluentValidation.AspNetCore;
+using TaskFlow.Application;
+using TaskFlow.Application.Behaviors; 
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -21,19 +23,23 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 // 🔹 Register UnitOfWork
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 
-// 🔹 Register MediatR
-builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(Program).Assembly));
+// 🔹 Register MediatR (scan both API & Application)
+builder.Services.AddMediatR(cfg =>
+    cfg.RegisterServicesFromAssemblies(
+        typeof(Program).Assembly,
+        typeof(AssemblyMarker).Assembly)); // ✅ Ensures all Handlers are found
 
-// 🔹 Register AutoMapper
-builder.Services.AddAutoMapper(cfg => cfg.AddMaps(typeof(UserMappingProfile).Assembly));
+// 🔹 Register AutoMapper (scan all mapping profiles)
+builder.Services.AddAutoMapper(cfg =>
+    cfg.AddMaps(typeof(UserMappingProfile).Assembly));
 
-// 🔹 Register FluentValidation
-builder.Services.AddValidatorsFromAssembly(typeof(CreateUserCommandValidator).Assembly);
-builder.Services.AddValidatorsFromAssembly(typeof(CreateTaskCommandValidator).Assembly);
-builder.Services.AddValidatorsFromAssembly(typeof(CreateProjectCommandValidator).Assembly);
+// 🔹 Register FluentValidation (scan all validators in Application layer)
+builder.Services.AddValidatorsFromAssemblyContaining<AssemblyMarker>(); // ✅ cleaner way
 
+// 🔹 Add pipeline behavior for validation
 builder.Services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationBehavior<,>));
 
+// 🔹 Enable FluentValidation auto validation
 builder.Services.AddFluentValidationAutoValidation();
 builder.Services.AddFluentValidationClientsideAdapters();
 
@@ -49,5 +55,8 @@ if (app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 app.UseAuthorization();
 app.MapControllers();
+
+// 🔹 Redirect root URL to Swagger
+app.MapGet("/", () => Results.Redirect("/swagger"));
 
 app.Run();

@@ -49,7 +49,7 @@ namespace TaskFlow.API.Controllers
             return Ok(project);
         }
 
-        [HttpDelete("{id}")]
+        [HttpDelete("{id:guid}")]
         public async Task<IActionResult> Delete(Guid Id)
         {
             var project = await _mediator.Send(new DeleteProjectCommand { ProjectId = Id });

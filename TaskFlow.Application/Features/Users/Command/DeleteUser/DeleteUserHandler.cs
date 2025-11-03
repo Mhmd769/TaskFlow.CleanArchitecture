@@ -4,6 +4,7 @@ using System;
 using System.Threading;
 using System.Threading.Tasks;
 using TaskFlow.Application.DTOs.UserDTOs;
+using TaskFlow.Domain.Exceptions;
 using TaskFlow.Domain.Interfaces;
 
 namespace TaskFlow.Application.Features.Users.Command.DeleteUser
@@ -24,7 +25,7 @@ namespace TaskFlow.Application.Features.Users.Command.DeleteUser
             // Fetch the user
             var user = await _unitOfWork.Users.GetByIdAsync(request.userid);
             if (user == null)
-                throw new Exception("User not found");
+                throw new  NotFoundException("User", request.userid);
 
             // Map before deleting
             var deletedUserDto = _mapper.Map<UserDto>(user);

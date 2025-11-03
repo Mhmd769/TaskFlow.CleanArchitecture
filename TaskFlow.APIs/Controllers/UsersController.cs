@@ -34,18 +34,20 @@ namespace TaskFlow.API.Controllers
             var user = await _mediator.Send(new GetUserByIdQuery { UserId = id });
             return Ok(user);
         }
-
         [HttpPost]
         public async Task<IActionResult> Create([FromBody] CreateUserDto dto)
         {
-            var user = await _mediator.Send(new CreateUserCommand(dto));
-            return CreatedAtAction(nameof(GetById), new { id = user.Id }, user);
+            var command = new CreateUserCommand(dto); // assign User properly
+            var result = await _mediator.Send(command);
+            return Ok(result);
         }
+
 
         [HttpPut]
         public async Task<IActionResult> Update([FromBody] UpdateUserDto dto)
         {
-            var user = await _mediator.Send(new UpdateUserCommand(dto));
+            var command = new UpdateUserCommand(dto);
+            var user = await _mediator.Send(command);
             return Ok(user);
         }
 

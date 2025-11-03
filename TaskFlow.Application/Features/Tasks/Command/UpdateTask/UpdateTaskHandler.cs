@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using AutoMapper;
 using MediatR;
 using TaskFlow.Application.DTOs.TaskDTOs;
+using TaskFlow.Domain.Exceptions;
 using TaskFlow.Domain.Interfaces;
 
 namespace TaskFlow.Application.Features.Tasks.Command.UpdateTask
@@ -26,7 +27,7 @@ namespace TaskFlow.Application.Features.Tasks.Command.UpdateTask
 
             if (existingtask != null)
             {
-                throw new Exception("Task not found");
+                throw new AppException("Task not found");
             }
             _mapper.Map(request.Task, existingtask);
 

@@ -6,6 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using TaskFlow.Application.DTOs.ProjectDTOs;
+using TaskFlow.Domain.Exceptions;
 using TaskFlow.Domain.Interfaces;
 
 namespace TaskFlow.Application.Features.Projects.Queries.GetPrpjectById
@@ -23,7 +24,7 @@ namespace TaskFlow.Application.Features.Projects.Queries.GetPrpjectById
         public async Task<ProjectDto> Handle(GetProjectByIdQuery request, CancellationToken cancellationToken)
         {
             var project = await _unitOfWork.Projects.GetByIdAsync(request.ProjectId);
-            if (project == null) throw new Exception("Project not found");
+            if (project == null) throw new NotFoundException("Project", request.ProjectId);
             return _mapper.Map<ProjectDto>(project);
         }
     }

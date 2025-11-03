@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using TaskFlow.Application.DTOs.ProjectDTOs;
+using TaskFlow.Domain.Exceptions;
 using TaskFlow.Domain.Interfaces;
 
 namespace TaskFlow.Application.Features.Projects.Queries.GetAllProjects
@@ -28,7 +29,7 @@ namespace TaskFlow.Application.Features.Projects.Queries.GetAllProjects
             var projectDtos = await _mapper.ProjectTo<ProjectDto>(projects).ToListAsync(cancellationToken);
 
             if (!projectDtos.Any())
-                throw new Exception("No projects found");
+                throw new AppException("No projects found");
 
             return projectDtos;
         }

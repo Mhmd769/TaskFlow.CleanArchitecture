@@ -2,6 +2,7 @@
 using MediatR;
 using TaskFlow.Application.DTOs.UserDTOs;
 using TaskFlow.Domain.Entities;
+using TaskFlow.Domain.Exceptions;
 using TaskFlow.Domain.Interfaces;
 
 namespace TaskFlow.Application.Features.Users.Command.UpdateUser
@@ -20,9 +21,9 @@ namespace TaskFlow.Application.Features.Users.Command.UpdateUser
         public async Task<UserDto> Handle(UpdateUserCommand request, CancellationToken cancellationToken)
         {
             // 1️⃣ Get existing user
-            var existingUser = await _unitOfWork.Users.GetByIdAsync(request.UserId);
+            var existingUser = await _unitOfWork.Users.GetByIdAsync(request.User.Id);
             if (existingUser == null)
-                throw new Exception("User not found");
+                throw new NotFoundException("User", request.User.Id);
 
             // 2️⃣ Map updated fields from DTO → Entity
             _mapper.Map(request.User, existingUser);

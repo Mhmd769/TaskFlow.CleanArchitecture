@@ -5,13 +5,11 @@ namespace TaskFlow.Application.Features.Users.Command.UpdateUser
 {
     public class UpdateUserCommand : IRequest<UserDto>
     {
+        public UpdateUserDto User { get; set; }
+
         public UpdateUserCommand(UpdateUserDto dto)
         {
-            Dto = dto;
+            User = dto; // assign here
         }
-
-        public Guid UserId { get; set; }
-        public UpdateUserDto User { get; set; } = null!;
-        public UpdateUserDto Dto { get; }
     }
 }

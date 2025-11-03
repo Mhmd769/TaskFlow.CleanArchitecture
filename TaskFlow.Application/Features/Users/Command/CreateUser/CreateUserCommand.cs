@@ -14,7 +14,9 @@ namespace TaskFlow.Application.Features.Users.Command.CreateUser
     {
         public CreateUserDto User { get; set; } = null!;
 
-        public CreateUserCommand(CreateUserDto dto) {
+        public CreateUserCommand(CreateUserDto dto)
+        {
+            User = dto; // ⚡ assign here
         }
     }
 }

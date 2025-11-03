@@ -3,6 +3,7 @@ using MediatR;
 using Microsoft.EntityFrameworkCore;
 using TaskFlow.Application.DTOs.ProjectDTOs;
 using TaskFlow.Domain.Entities;
+using TaskFlow.Domain.Exceptions;
 using TaskFlow.Domain.Interfaces;
 
 namespace TaskFlow.Application.Features.Projects.Command.UpdateProjects
@@ -23,12 +24,12 @@ namespace TaskFlow.Application.Features.Projects.Command.UpdateProjects
             // 1️⃣ Fetch the existing project
             var project = await _unitOfWork.Projects.GetByIdAsync(request.Project.Id);
             if (project == null)
-                throw new Exception("Project not found");
+                throw new NotFoundException("Project", request.Project.Id);
 
             // 2️⃣ Optional: check if the new owner exists
             var owner = await _unitOfWork.Users.GetByIdAsync(request.Project.OwnerId);
             if (owner == null)
-                throw new Exception("Owner not found");
+                throw new NotFoundException("User", request.Project.OwnerId);
 
             // 3️⃣ Map updated fields from DTO → Entity
             _mapper.Map(request.Project, project);

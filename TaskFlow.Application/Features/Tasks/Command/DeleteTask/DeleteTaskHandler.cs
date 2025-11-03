@@ -6,6 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using TaskFlow.Application.DTOs.TaskDTOs;
+using TaskFlow.Domain.Exceptions;
 using TaskFlow.Domain.Interfaces;
 
 namespace TaskFlow.Application.Features.Tasks.Command.DeleteTask
@@ -26,7 +27,7 @@ namespace TaskFlow.Application.Features.Tasks.Command.DeleteTask
 
             if (task == null)
             {
-                throw new ArgumentException("Task not found");
+                throw new NotFoundException("Task", request.TaskId);
             }
 
             _unitOfWork.Tasks.Delete(task);

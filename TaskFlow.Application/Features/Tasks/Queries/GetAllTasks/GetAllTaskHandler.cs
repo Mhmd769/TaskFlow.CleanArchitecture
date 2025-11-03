@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using TaskFlow.Application.DTOs.TaskDTOs;
+using TaskFlow.Domain.Exceptions;
 using TaskFlow.Domain.Interfaces;
 
 namespace TaskFlow.Application.Features.Tasks.Queries.GetAllTasks
@@ -24,6 +25,10 @@ namespace TaskFlow.Application.Features.Tasks.Queries.GetAllTasks
         public async Task<List<TaskDto>> Handle(GetAllTasksQuery request, CancellationToken cancellationToken)
         {
             var tasks= _unitOfWork.Tasks.GetAll();
+            if (tasks == null)
+            {
+                throw new AppException("No Tasks Founded");
+            }
 
             var taskdto = await _mapper.ProjectTo<TaskDto>(tasks).ToListAsync(cancellationToken);
 

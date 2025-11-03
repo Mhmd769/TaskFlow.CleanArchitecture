@@ -28,7 +28,7 @@ namespace TaskFlow.Application.Features.Users.Queries.GetAllUsers
                                         .ToListAsync(cancellationToken);
 
             if (!userDtos.Any())
-                throw new Exception("No users found");
+                throw new ApplicationException("No users found.");
 
             return userDtos;
         }

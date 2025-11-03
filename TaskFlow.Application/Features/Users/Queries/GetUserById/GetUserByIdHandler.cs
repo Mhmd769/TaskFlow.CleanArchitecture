@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using MediatR;
 using TaskFlow.Application.DTOs.UserDTOs;
+using TaskFlow.Domain.Exceptions;
 using TaskFlow.Domain.Interfaces;
 
 namespace TaskFlow.Application.Features.Users.Queries.GetUserById
@@ -20,7 +21,7 @@ namespace TaskFlow.Application.Features.Users.Queries.GetUserById
         {
             var user = await _unitOfWork.Users.GetByIdAsync(request.UserId);
             if (user == null)
-                throw new Exception("User not found");
+                throw new NotFoundException("User", request.UserId);
 
             return _mapper.Map<UserDto>(user);
         }

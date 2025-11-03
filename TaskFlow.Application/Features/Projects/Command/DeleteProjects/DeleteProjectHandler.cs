@@ -2,6 +2,7 @@
 using MediatR;
 using TaskFlow.Application.DTOs.ProjectDTOs;
 using TaskFlow.Domain.Entities;
+using TaskFlow.Domain.Exceptions;
 using TaskFlow.Domain.Interfaces;
 
 namespace TaskFlow.Application.Features.Projects.Command.DeleteProjects
@@ -22,7 +23,7 @@ namespace TaskFlow.Application.Features.Projects.Command.DeleteProjects
             // 1️⃣ Fetch project from DB
             var project = await _unitOfWork.Projects.GetByIdAsync(request.ProjectId);
             if (project == null)
-                throw new Exception("Project not found");
+                throw new NotFoundException("Project", request.ProjectId);
 
             // 2️⃣ Delete project
             _unitOfWork.Projects.Delete(project);

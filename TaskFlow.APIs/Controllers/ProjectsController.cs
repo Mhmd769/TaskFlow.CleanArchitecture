@@ -10,8 +10,8 @@ using TaskFlow.Application.Features.Projects.Queries.GetPrpjectById;
 
 namespace TaskFlow.API.Controllers
 {
-    [Route("api/[controller]")]
     [ApiController]
+    [Route("api/[controller]")]
     public class ProjectsController : ControllerBase
     {
         private readonly IMediator _mediator;
@@ -28,7 +28,7 @@ namespace TaskFlow.API.Controllers
             return Ok(projects);
         }
 
-        [HttpGet("{id:guid}")]
+        [HttpGet("{Id}")]
         public async Task<IActionResult> GetById(Guid Id)
         {
             var project = await _mediator.Send(new GetProjectByIdQuery{ ProjectId=Id});
@@ -45,11 +45,12 @@ namespace TaskFlow.API.Controllers
         [HttpPut]
         public async Task<IActionResult> Update([FromBody] UpdateProjectDto dto)
         {
-            var project = await _mediator.Send(new UpdateProjectCommand(dto));
+            var command = new UpdateProjectCommand(dto);
+            var project = await _mediator.Send(command);
             return Ok(project);
         }
 
-        [HttpDelete("{id:guid}")]
+        [HttpDelete("{Id}")]
         public async Task<IActionResult> Delete(Guid Id)
         {
             var project = await _mediator.Send(new DeleteProjectCommand { ProjectId = Id });

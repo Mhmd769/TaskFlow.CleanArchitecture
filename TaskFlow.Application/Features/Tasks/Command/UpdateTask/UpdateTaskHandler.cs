@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using AutoMapper;
+﻿using AutoMapper;
 using MediatR;
 using TaskFlow.Application.DTOs.TaskDTOs;
 using TaskFlow.Domain.Exceptions;
@@ -21,22 +16,25 @@ namespace TaskFlow.Application.Features.Tasks.Command.UpdateTask
             _unitOfWork = unitOfWork;
             _mapper = mapper;
         }
+
         public async Task<TaskDto> Handle(UpdateTaskCommand request, CancellationToken cancellationToken)
         {
-            var existingtask = await _unitOfWork.Tasks.GetByIdAsync(request.Task.Id);
+            var dto = request.Task;
 
-            if (existingtask != null)
-            {
-                throw new AppException("Task not found");
-            }
-            _mapper.Map(request.Task, existingtask);
+            // 1️⃣ Fetch existing task
+            var existingTask = await _unitOfWork.Tasks.GetByIdAsync(dto.Id);
+            if (existingTask == null)
+                throw new NotFoundException("Task", dto.Id);
 
-            _unitOfWork.Tasks.Update(existingtask);
+            // 2️⃣ Map DTO → Entity (updates fields)
+            _mapper.Map(dto, existingTask);
 
+            // 3️⃣ Update entity
+            _unitOfWork.Tasks.Update(existingTask);
             await _unitOfWork.SaveAsync();
 
-            return _mapper.Map<TaskDto>(existingtask);
-
+            // 4️⃣ Return updated DTO
+            return _mapper.Map<TaskDto>(existingTask);
         }
     }
 }

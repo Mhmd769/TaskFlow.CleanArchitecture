@@ -33,7 +33,7 @@ namespace TaskFlow.API.Controllers
             return Ok(Tasks);
         }
 
-        [HttpGet("{id:guid}")]
+        [HttpGet("{Id}")]
 
         public async Task<IActionResult> GetById(Guid Id)
         {
@@ -51,11 +51,12 @@ namespace TaskFlow.API.Controllers
         [HttpPut]
         public async Task<IActionResult> Update([FromBody] UpdateTaskDto dto)
         {
-            var Task = await _mediator.Send(new UpdateTaskCommand(dto));
+            var command = new UpdateTaskCommand(dto);
+            var Task = await _mediator.Send(command);
             return Ok(Task);
         }
 
-        [HttpDelete("{id}")]
+        [HttpDelete("{Id}")]
         public async Task<IActionResult> Delete(Guid Id)
         {   
             var task = await _mediator.Send(new DeleteTaskCommand { TaskId = Id });

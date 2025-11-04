@@ -40,4 +40,6 @@ public class GenericRepository<T> : IRepository<T> where T : class
     {
         _dbSet.Remove(entity);
     }
+    public IQueryable<T> Query() => _dbSet.AsQueryable();
+
 }

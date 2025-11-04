@@ -1,17 +1,13 @@
 ﻿using AutoMapper;
 using MediatR;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
 using TaskFlow.Application.DTOs.ProjectDTOs;
 using TaskFlow.Domain.Exceptions;
 using TaskFlow.Domain.Interfaces;
 
 namespace TaskFlow.Application.Features.Projects.Queries.GetPrpjectById
 {
-    public class GetProjectByIdHandler :IRequestHandler<GetProjectByIdQuery, ProjectDto>
+    public class GetProjectByIdHandler : IRequestHandler<GetProjectByIdQuery, ProjectDto>
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
@@ -21,11 +17,25 @@ namespace TaskFlow.Application.Features.Projects.Queries.GetPrpjectById
             _unitOfWork = unitOfWork;
             _mapper = mapper;
         }
+
         public async Task<ProjectDto> Handle(GetProjectByIdQuery request, CancellationToken cancellationToken)
         {
-            var project = await _unitOfWork.Projects.GetByIdAsync(request.ProjectId);
-            if (project == null) throw new NotFoundException("Project", request.ProjectId);
-            return _mapper.Map<ProjectDto>(project);
+            // ✅ Load related Owner and Tasks
+            var project = await _unitOfWork.Projects
+                .Query() // <-- exposes IQueryable<Project> from repository
+                .Include(p => p.Owner)
+                .Include(p => p.Tasks)
+                .FirstOrDefaultAsync(p => p.Id == request.ProjectId, cancellationToken);
+
+            if (project == null)
+                throw new NotFoundException("Project", request.ProjectId);
+
+            // ✅ Map and compute custom fields
+            var dto = _mapper.Map<ProjectDto>(project);
+            dto.OwnerName = project.Owner?.FullName;
+            dto.TaskCount = project.Tasks?.Count ?? 0;
+
+            return dto;
         }
     }
 }

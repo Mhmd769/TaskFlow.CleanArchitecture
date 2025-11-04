@@ -13,7 +13,7 @@ namespace TaskFlow.Application.DTOs.ProjectDTOs
         public string? Description { get; set; }
         public DateTime CreatedAt { get; set; }
 
-        // Optional computed or display-only fields
+        // Display-only fields
         public string? OwnerName { get; set; }
         public int TaskCount { get; set; }
     }

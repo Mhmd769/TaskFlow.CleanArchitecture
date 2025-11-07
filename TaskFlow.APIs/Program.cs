@@ -11,6 +11,8 @@ using TaskFlow.Domain.Interfaces;
 using TaskFlow.Infrastructure.Persistence;
 using TaskFlow.Infrastructure.Services;
 using TaskFlow.Infrastructure.Repositories;
+using TaskFlow.Infrastructure.security;
+using TaskFlow.Infrastructure.Seed;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -64,7 +66,7 @@ builder.Services.AddScoped<IJwtService, JwtService>();
 builder.Services.AddScoped<IAuthRepository, AuthRepository>();
 
 
-var jwtSettings = builder.Configuration.GetSection("Jwt").Get<JwtSettings>();
+var jwtSettings = builder.Configuration.GetSection("Jwt").Get<JwtSettings>(); 
 var key = Encoding.UTF8.GetBytes(jwtSettings.Key);
 
 builder.Services.AddAuthentication(options =>
@@ -85,6 +87,8 @@ builder.Services.AddAuthentication(options =>
         IssuerSigningKey = new SymmetricSecurityKey(key)
     };
 });
+
+builder.Services.AddScoped<IPasswordHasher, PasswordHasher>();
 
 
 // =======================================
@@ -111,6 +115,9 @@ app.MapControllers();
 
 // ✅ Redirect root URL to Swagger UI
 app.MapGet("/", () => Results.Redirect("/swagger"));
+
+await DatabaseSeeder.SeedSuperAdminAsync(app.Services);
+
 
 // =======================================
 // 🔹 Run App

@@ -13,6 +13,7 @@ using TaskFlow.Infrastructure.Services;
 using TaskFlow.Infrastructure.Repositories;
 using TaskFlow.Infrastructure.security;
 using TaskFlow.Infrastructure.Seed;
+using Microsoft.OpenApi.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -20,8 +21,46 @@ var builder = WebApplication.CreateBuilder(args);
 // 🔹 Add Services to the Container
 // =======================================
 builder.Services.AddControllers();
+
+// =======================================
+// 🔹 Swagger with JWT Auth Support
+// =======================================
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+builder.Services.AddSwaggerGen(options =>
+{
+    options.SwaggerDoc("v1", new OpenApiInfo
+    {
+        Title = "TaskFlow API",
+        Version = "v1",
+        Description = "TaskFlow Backend API with Clean Architecture"
+    });
+
+    // 🔐 Add JWT Authentication to Swagger
+    options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+    {
+        Name = "Authorization",
+        Type = SecuritySchemeType.Http,
+        Scheme = "Bearer",
+        BearerFormat = "JWT",
+        In = ParameterLocation.Header,
+        Description = "Enter 'Bearer' followed by a space and your JWT token."
+    });
+
+    options.AddSecurityRequirement(new OpenApiSecurityRequirement
+    {
+        {
+            new OpenApiSecurityScheme
+            {
+                Reference = new OpenApiReference
+                {
+                    Type = ReferenceType.SecurityScheme,
+                    Id = "Bearer"
+                }
+            },
+            Array.Empty<string>()
+        }
+    });
+});
 
 // =======================================
 // 🔹 Database Context
@@ -40,7 +79,7 @@ builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 builder.Services.AddMediatR(cfg =>
     cfg.RegisterServicesFromAssemblies(
         typeof(Program).Assembly,
-        typeof(AssemblyMarker).Assembly)); // ✅ ensures all Handlers are found
+        typeof(AssemblyMarker).Assembly));
 
 // =======================================
 // 🔹 AutoMapper
@@ -64,9 +103,9 @@ builder.Services.Configure<JwtSettings>(
 
 builder.Services.AddScoped<IJwtService, JwtService>();
 builder.Services.AddScoped<IAuthRepository, AuthRepository>();
+builder.Services.AddScoped<IPasswordHasher, PasswordHasher>();
 
-
-var jwtSettings = builder.Configuration.GetSection("Jwt").Get<JwtSettings>(); 
+var jwtSettings = builder.Configuration.GetSection("Jwt").Get<JwtSettings>();
 var key = Encoding.UTF8.GetBytes(jwtSettings.Key);
 
 builder.Services.AddAuthentication(options =>
@@ -88,9 +127,6 @@ builder.Services.AddAuthentication(options =>
     };
 });
 
-builder.Services.AddScoped<IPasswordHasher, PasswordHasher>();
-
-
 // =======================================
 // 🔹 Build App
 // =======================================
@@ -107,7 +143,7 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
-// ✅ Important Order: Authentication → Authorization
+// ✅ Important Order
 app.UseAuthentication();
 app.UseAuthorization();
 
@@ -116,8 +152,8 @@ app.MapControllers();
 // ✅ Redirect root URL to Swagger UI
 app.MapGet("/", () => Results.Redirect("/swagger"));
 
+// ✅ Seed SuperAdmin (runs once if not exists)
 await DatabaseSeeder.SeedSuperAdminAsync(app.Services);
-
 
 // =======================================
 // 🔹 Run App

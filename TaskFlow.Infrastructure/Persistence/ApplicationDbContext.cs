@@ -31,6 +31,11 @@ namespace TaskFlow.Infrastructure.Persistence
                 .WithMany(u => u.Tasks)
                 .HasForeignKey(t => t.AssignedUserId)
                 .OnDelete(DeleteBehavior.SetNull);
+
+            modelBuilder
+            .Entity<User>()
+            .Property(u => u.Role)
+            .HasConversion<string>();
         }
     }
 }

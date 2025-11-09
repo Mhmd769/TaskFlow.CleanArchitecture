@@ -1,4 +1,5 @@
 ﻿using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using TaskFlow.Application.DTOs.UserDTOs;
@@ -7,10 +8,12 @@ using TaskFlow.Application.Features.Users.Command.DeleteUser;
 using TaskFlow.Application.Features.Users.Command.UpdateUser;
 using TaskFlow.Application.Features.Users.Queries.GetAllUsers;
 using TaskFlow.Application.Features.Users.Queries.GetUserById;
+using TaskFlow.Domain.Enums;
 
 namespace TaskFlow.API.Controllers
 {
     [ApiController]
+    [Authorize(Roles = $"{nameof(UserRole.SuperAdmin)},{nameof(UserRole.Admin)}")]
     [Route("api/[controller]")]
     public class UsersController : ControllerBase
     {

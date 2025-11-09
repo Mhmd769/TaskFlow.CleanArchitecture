@@ -1,4 +1,5 @@
 ﻿using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using TaskFlow.Application.DTOs.ProjectDTOs;
@@ -7,10 +8,13 @@ using TaskFlow.Application.Features.Projects.Command.DeleteProjects;
 using TaskFlow.Application.Features.Projects.Command.UpdateProjects;
 using TaskFlow.Application.Features.Projects.Queries.GetAllProjects;
 using TaskFlow.Application.Features.Projects.Queries.GetPrpjectById;
+using TaskFlow.Domain.Enums;
 
 namespace TaskFlow.API.Controllers
 {
     [ApiController]
+    [Authorize]
+
     [Route("api/[controller]")]
     public class ProjectsController : ControllerBase
     {

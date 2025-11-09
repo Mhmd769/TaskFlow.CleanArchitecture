@@ -34,7 +34,7 @@ namespace TaskFlow.Application.Features.Auth.Queries.Login
             return new LoginResponseDto
             {
                 Token = token,
-                Role = user.Role,
+                Role = user.Role.ToString(),
                 Username = user.Username
             };
         }

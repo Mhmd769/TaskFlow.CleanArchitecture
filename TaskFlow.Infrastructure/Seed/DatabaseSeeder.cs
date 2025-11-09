@@ -31,7 +31,7 @@ namespace TaskFlow.Infrastructure.Seed
                 FullName = "System Super Admin",
                 Email = superAdminEmail,
                 PhoneNumber = "00000000",
-                Role = "SuperAdmin",
+                Role = Domain.Enums.UserRole.SuperAdmin,
                 PasswordHash = BCrypt.Net.BCrypt.HashPassword("Admin@123"),
                 CreatedAt = DateTime.UtcNow
             };

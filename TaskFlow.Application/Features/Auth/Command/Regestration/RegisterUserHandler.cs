@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using TaskFlow.Domain.Entities;
+using TaskFlow.Domain.Enums;
 using TaskFlow.Domain.Interfaces;
 
 namespace TaskFlow.Application.Features.Auth.Command.Regestration
@@ -32,7 +33,7 @@ namespace TaskFlow.Application.Features.Auth.Command.Regestration
                 Email = request.RegisterDto.Email,
                 PhoneNumber = request.RegisterDto.PhoneNumber,
                 PasswordHash = BCrypt.Net.BCrypt.HashPassword(request.RegisterDto.Password),
-                Role = "User"
+                Role = UserRole.User
             };
 
             await _authRepo.AddUserAsync(newUser);

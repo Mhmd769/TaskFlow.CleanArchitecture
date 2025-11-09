@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using TaskFlow.Domain.Entities;
+using TaskFlow.Domain.Enums;
 using TaskFlow.Domain.Interfaces;
 using TaskFlow.Infrastructure.Persistence;
 
@@ -32,7 +33,7 @@ namespace TaskFlow.Infrastructure.Repositories
 
         public async Task<bool> AnySuperAdminExistsAsync()
         {
-            return await _context.Users.AnyAsync(u => u.Role == "SuperAdmin");
+            return await _context.Users.AnyAsync(u => u.Role ==  UserRole.SuperAdmin);
         }
     }
 }

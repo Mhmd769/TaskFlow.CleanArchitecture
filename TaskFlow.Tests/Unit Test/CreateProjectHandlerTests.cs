@@ -60,9 +60,6 @@ public class CreateProjectHandlerTests
         };
         var command = new CreateProjectCommand(dto);
 
-        // -----------------------------
-        // Act
-        // -----------------------------
         var result = await handler.Handle(command, CancellationToken.None);
 
         // -----------------------------

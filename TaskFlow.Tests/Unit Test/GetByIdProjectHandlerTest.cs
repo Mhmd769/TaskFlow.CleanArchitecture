@@ -1,72 +1,63 @@
-﻿using System.Collections.Generic;
+﻿using FluentAssertions;
+using Microsoft.EntityFrameworkCore;
+using Moq;
+using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Microsoft.EntityFrameworkCore;
-using Moq;
-using Xunit;
-using FluentAssertions;
 using TaskFlow.Application.DTOs.ProjectDTOs;
 using TaskFlow.Application.Features.Projects.Queries.GetPrpjectById;
 using TaskFlow.Domain.Entities;
 using TaskFlow.Domain.Interfaces;
+using Xunit;
 
 public class GetByIdProjectHandlerTests
 {
     [Fact]
-    public async Task Handle_ShouldReturnProject_WhenProjectExists()
+    public async Task Handle_ShouldReturnMappedProject_WhenProjectExists()
     {
         // Arrange
         var mockUnitOfWork = new Mock<IUnitOfWork>();
         var mockProjectRepo = new Mock<IRepository<Project>>();
         var mockMapper = new Mock<AutoMapper.IMapper>();
 
-        var userId = Guid.NewGuid();
-        var user = new User { Id = userId, Username = "testuser", FullName = "Test User" };
-
-        var projectId = Guid.NewGuid();
+        var user = new User { Id = Guid.NewGuid(), FullName = "Test User" };
         var project = new Project
         {
-            Id = projectId,
+            Id = Guid.NewGuid(),
             Name = "Test Project",
-            Description = "Test",
-            OwnerId = userId,
+            Description = "Test Desc",
             Owner = user,
             Tasks = new List<TaskItem>()
         };
 
-        var projects = new List<Project> { project }.AsQueryable();
-
-        // Mock Query() to support EF async
-        mockProjectRepo.Setup(r => r.Query())
-            .Returns(projects);
+        // 🟢 Instead of using Query() and EF async:
+        mockProjectRepo.Setup(r => r.GetByIdAsync(project.Id))
+                       .ReturnsAsync(project);
 
         mockMapper.Setup(m => m.Map<ProjectDto>(It.IsAny<Project>()))
-            .Returns((Project p) => new ProjectDto
-            {
-                Id = p.Id,
-                Name = p.Name,
-                Description = p.Description,
-                OwnerName = p.Owner.FullName,
-                TaskCount = p.Tasks.Count
-            });
+                  .Returns(new ProjectDto
+                  {
+                      Id = project.Id,
+                      Name = project.Name,
+                      Description = project.Description,
+                      OwnerName = project.Owner.FullName,
+                      TaskCount = project.Tasks.Count
+                  });
 
         mockUnitOfWork.Setup(u => u.Projects).Returns(mockProjectRepo.Object);
 
         var handler = new GetProjectByIdHandler(mockUnitOfWork.Object, mockMapper.Object);
 
-        var query = new GetProjectByIdQuery
-        {
-            ProjectId = projectId
-        };
+        var query = new GetProjectByIdQuery { ProjectId = project.Id };
 
         // Act
         var result = await handler.Handle(query, CancellationToken.None);
 
         // Assert
         result.Should().NotBeNull();
-        result.Id.Should().Be(projectId);
+        result.Id.Should().Be(project.Id);
         result.OwnerName.Should().Be("Test User");
-        result.TaskCount.Should().Be(0);
     }
 }

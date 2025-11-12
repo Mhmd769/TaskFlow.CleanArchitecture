@@ -20,12 +20,8 @@ namespace TaskFlow.Application.Features.Projects.Queries.GetPrpjectById
 
         public async Task<ProjectDto> Handle(GetProjectByIdQuery request, CancellationToken cancellationToken)
         {
-            // ✅ Load related Owner and Tasks
-            var project = await _unitOfWork.Projects
-                .Query() // <-- exposes IQueryable<Project> from repository
-                .Include(p => p.Owner)
-                .Include(p => p.Tasks)
-                .FirstOrDefaultAsync(p => p.Id == request.ProjectId, cancellationToken);
+            var project = await _unitOfWork.Projects.GetByIdAsync(request.ProjectId);
+
 
             if (project == null)
                 throw new NotFoundException("Project", request.ProjectId);

@@ -19,7 +19,6 @@
   <ItemGroup>
     <Folder Include="Caching\" />
     <Folder Include="Messaging\" />
-    <Folder Include="Logging\" />
     <Folder Include="Notifications\" />
   </ItemGroup>
 

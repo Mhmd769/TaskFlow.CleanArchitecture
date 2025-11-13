@@ -29,7 +29,7 @@ namespace TaskFlow.Tests.Integration_Test
             var userId = _fixture.DefaultUserId;
             var createDto = new CreateProjectDto
             {
-                Name = "Integration Test Project",
+                Name = "Integration Test Project",       
                 Description = "Testing real db flow",
                 OwnerId = userId
             };

@@ -2,6 +2,7 @@
 using MediatR;
 using TaskFlow.Application.DTOs.UserDTOs;
 using TaskFlow.Domain.Entities;
+using TaskFlow.Domain.Exceptions;
 using TaskFlow.Domain.Interfaces;
 
 namespace TaskFlow.Application.Features.Users.Command.CreateUser

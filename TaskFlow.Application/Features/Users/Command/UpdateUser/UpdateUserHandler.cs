@@ -23,7 +23,7 @@ namespace TaskFlow.Application.Features.Users.Command.UpdateUser
             // 1️⃣ Get existing user
             var existingUser = await _unitOfWork.Users.GetByIdAsync(request.User.Id);
             if (existingUser == null)
-                throw new NotFoundException("User", request.User.Id);
+                throw new NotFoundException("User" ,request.User.Id);
 
             // 2️⃣ Map updated fields from DTO → Entity
             _mapper.Map(request.User, existingUser);

@@ -1,14 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Microsoft.AspNetCore.Http;
+using System;
 
 namespace TaskFlow.Domain.Exceptions
 {
     public class NotFoundException : AppException
     {
-        public NotFoundException(string entity, object key)
-            : base($"{entity} with ID '{key}' was not found.") { }
+        public NotFoundException(string entity, Guid id)
+            : base($"{entity} with id: {id} not found", StatusCodes.Status404NotFound)
+        {
+        }
     }
 }

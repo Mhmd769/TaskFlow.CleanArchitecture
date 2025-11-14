@@ -21,23 +21,37 @@ namespace TaskFlow.API.Middlewares
             }
             catch (AppException ex)
             {
+                _logger.LogError(ex, ex.Message);
+
                 context.Response.ContentType = "application/json";
                 context.Response.StatusCode = ex switch
                 {
                     NotFoundException => StatusCodes.Status404NotFound,
-                    ValidationException => StatusCodes.Status400BadRequest,
+                    ConflictException => StatusCodes.Status409Conflict,
+                    UnauthorizedException => StatusCodes.Status401Unauthorized,
+                    ForbiddenException => StatusCodes.Status403Forbidden,
                     _ => StatusCodes.Status500InternalServerError
                 };
 
-                await context.Response.WriteAsJsonAsync(new { error = ex.Message });
+                await context.Response.WriteAsJsonAsync(new
+                {
+                    status = "error",
+                    message = ex.Message
+                });
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                _logger.LogError(ex, "Unhandled exception");
+
                 context.Response.ContentType = "application/json";
-                context.Response.StatusCode = 500;
-                await context.Response.WriteAsJsonAsync(new { error = "An unexpected error occurred." });
+                context.Response.StatusCode = StatusCodes.Status500InternalServerError;
+
+                await context.Response.WriteAsJsonAsync(new
+                {
+                    status = "error",
+                    message = "Something went wrong. Please try again."
+                });
             }
         }
     }
-
 }

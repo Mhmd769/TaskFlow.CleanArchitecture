@@ -8,6 +8,11 @@ namespace TaskFlow.Domain.Exceptions
 {
     public class AppException : Exception
     {
-        public AppException(string message) : base(message) { }
+        public int StatusCode { get; }
+
+        public AppException(string message, int statusCode = 400) : base(message)
+        {
+            StatusCode = statusCode;
+        }
     }
 }

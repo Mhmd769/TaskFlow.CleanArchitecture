@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
+using TaskFlow.Application.Common;
 using TaskFlow.Application.DTOs.ProjectDTOs;
 using TaskFlow.Domain.Entities;
 using TaskFlow.Domain.Exceptions;
@@ -12,11 +13,13 @@ namespace TaskFlow.Application.Features.Projects.Command.UpdateProjects
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
+        private readonly ICacheService _cache; 
 
-        public UpdateProjectHandler(IUnitOfWork unitOfWork, IMapper mapper)
+        public UpdateProjectHandler(IUnitOfWork unitOfWork, IMapper mapper ,  ICacheService cache)
         {
             _unitOfWork = unitOfWork;
             _mapper = mapper;
+            _cache = cache;
         }
 
         public async Task<ProjectDto> Handle(UpdateProjectCommand request, CancellationToken cancellationToken)
@@ -37,6 +40,13 @@ namespace TaskFlow.Application.Features.Projects.Command.UpdateProjects
             // 4️⃣ Save changes
             _unitOfWork.Projects.Update(project);
             await _unitOfWork.SaveAsync();
+
+            // ❗Invalidate cache
+            string cacheById = $"project:{request.Project.Id}";
+            string cacheAll = "projects:all";
+
+            await _cache.RemoveAsync(cacheById);
+            await _cache.RemoveAsync(cacheAll);
 
             // 5️⃣ Return updated Project as DTO
             return _mapper.Map<ProjectDto>(project);

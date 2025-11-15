@@ -17,6 +17,8 @@ using Microsoft.OpenApi.Models;
 using Serilog.Events;
 using Serilog;
 using TaskFlow.API.Middlewares;
+using Microsoft.Extensions.Configuration;
+using TaskFlow.Application.Common;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -70,6 +72,16 @@ builder.Services.AddSwaggerGen(options =>
 // =======================================
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+
+
+
+builder.Services.AddStackExchangeRedisCache(options =>
+{
+    options.Configuration = builder.Configuration.GetConnectionString("RedisConnection");
+    options.InstanceName = "TaskFlow_";
+});
+
+builder.Services.AddScoped<ICacheService, RedisCacheService>();
 
 // =======================================
 // 🔹 Unit of Work

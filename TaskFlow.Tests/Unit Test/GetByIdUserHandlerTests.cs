@@ -9,93 +9,115 @@ using TaskFlow.Application.Features.Users.Queries.GetUserById;
 using TaskFlow.Domain.Entities;
 using TaskFlow.Domain.Exceptions;
 using TaskFlow.Domain.Interfaces;
+using TaskFlow.Application.Common;
 
 namespace TaskFlow.Tests
 {
-    public class GetByIdUserHandlerTests
+    public class GetUserByIdHandlerTests
     {
+        // ---------------------------
+        // 1️⃣ Should Return from Cache
+        // ---------------------------
         [Fact]
-        public async Task Handle_ShouldReturnUser_WhenUserExists()
+        public async Task Handle_ShouldReturnUser_FromCache()
         {
-            // -----------------------------
-            // ARRANGE
-            // -----------------------------
             var mockUnitOfWork = new Mock<IUnitOfWork>();
             var mockUserRepo = new Mock<IRepository<User>>();
             var mockMapper = new Mock<AutoMapper.IMapper>();
+            var mockCache = new Mock<ICacheService>();
 
             mockUnitOfWork.Setup(u => u.Users).Returns(mockUserRepo.Object);
 
             var userId = Guid.NewGuid();
-            var user = new User { Id = userId, Username = "testuser", FullName = "Test User", Email = "test@mail.com" };
+            var cachedUserDto = new UserDto
+            {
+                Id = userId,
+                Username = "cachedUser",
+                Email = "cached@mail.com",
+                FullName = "Cached User"
+            };
+
+            mockCache.Setup(c => c.GetAsync<UserDto>($"user:{userId}"))
+                     .ReturnsAsync(cachedUserDto);
+
+            var handler = new GetUserByIdHandler(mockUnitOfWork.Object, mockMapper.Object, mockCache.Object);
+            var query = new GetUserByIdQuery { UserId = userId };
+
+            var result = await handler.Handle(query, CancellationToken.None);
+
+            result.Should().NotBeNull();
+            result.Username.Should().Be("cachedUser");
+
+            mockUserRepo.Verify(r => r.GetByIdAsync(It.IsAny<Guid>()), Times.Never);
+        }
+
+        // ---------------------------------------------
+        // 2️⃣ Should Return from DB and Save into Cache
+        // ---------------------------------------------
+        [Fact]
+        public async Task Handle_ShouldReturnUser_WhenUserExists_AndCacheIt()
+        {
+            var mockUnitOfWork = new Mock<IUnitOfWork>();
+            var mockUserRepo = new Mock<IRepository<User>>();
+            var mockMapper = new Mock<AutoMapper.IMapper>();
+            var mockCache = new Mock<ICacheService>();
+
+            mockUnitOfWork.Setup(u => u.Users).Returns(mockUserRepo.Object);
+
+            var userId = Guid.NewGuid();
+            var user = new User { Id = userId, Username = "dbuser", Email = "db@mail.com", FullName = "DB User" };
+
+            mockCache.Setup(c => c.GetAsync<UserDto>($"user:{userId}"))
+                     .ReturnsAsync((UserDto?)null);
 
             mockUserRepo.Setup(r => r.GetByIdAsync(userId))
                         .ReturnsAsync(user);
 
-            mockMapper.Setup(m => m.Map<UserDto>(It.IsAny<User>()))
-                      .Returns((User u) => new UserDto
+            mockMapper.Setup(m => m.Map<UserDto>(user))
+                      .Returns(new UserDto
                       {
-                          Id = u.Id,
-                          Username = u.Username,
-                          FullName = u.FullName,
-                          Email = u.Email
+                          Id = userId,
+                          Username = "dbuser",
+                          Email = "db@mail.com",
+                          FullName = "DB User"
                       });
 
-            var handler = new GetUserByIdHandler(mockUnitOfWork.Object, mockMapper.Object);
+            var handler = new GetUserByIdHandler(mockUnitOfWork.Object, mockMapper.Object, mockCache.Object);
+            var query = new GetUserByIdQuery { UserId = userId };
 
-            var query = new GetUserByIdQuery
-            {
-                UserId = userId
-            };
-
-            // -----------------------------
-            // ACT
-            // -----------------------------
             var result = await handler.Handle(query, CancellationToken.None);
 
-            // -----------------------------
-            // ASSERT
-            // -----------------------------
-            result.Should().NotBeNull();
-            result.Id.Should().Be(userId);
-            result.Username.Should().Be("testuser");
-            result.FullName.Should().Be("Test User");
-            result.Email.Should().Be("test@mail.com");
+            result.Username.Should().Be("dbuser");
 
-            mockUserRepo.Verify(r => r.GetByIdAsync(userId), Times.Once);
+            mockCache.Verify(c => c.SetAsync($"user:{userId}", It.IsAny<UserDto>(), It.IsAny<TimeSpan>()), Times.Once);
         }
 
+        // ----------------------------------------
+        // 3️⃣ Should Throw NotFoundException
+        // ----------------------------------------
         [Fact]
-        public async Task Handle_ShouldThrowNotFoundException_WhenUserDoesNotExist()
+        public async Task Handle_ShouldThrowNotFoundException_WhenUserNotFound()
         {
-            // -----------------------------
-            // ARRANGE
-            // -----------------------------
             var mockUnitOfWork = new Mock<IUnitOfWork>();
             var mockUserRepo = new Mock<IRepository<User>>();
             var mockMapper = new Mock<AutoMapper.IMapper>();
+            var mockCache = new Mock<ICacheService>();
 
             mockUnitOfWork.Setup(u => u.Users).Returns(mockUserRepo.Object);
 
             var userId = Guid.NewGuid();
 
+            mockCache.Setup(c => c.GetAsync<UserDto>($"user:{userId}"))
+                     .ReturnsAsync((UserDto?)null);
+
             mockUserRepo.Setup(r => r.GetByIdAsync(userId))
                         .ReturnsAsync((User?)null);
 
-            var handler = new GetUserByIdHandler(mockUnitOfWork.Object, mockMapper.Object);
+            var handler = new GetUserByIdHandler(mockUnitOfWork.Object, mockMapper.Object, mockCache.Object);
+            var query = new GetUserByIdQuery { UserId = userId };
 
-            var query = new GetUserByIdQuery
-            {
-                UserId = userId
-            };
-
-            // -----------------------------
-            // ACT & ASSERT
-            // -----------------------------
-            await Assert.ThrowsAsync<NotFoundException>(async () =>
-                await handler.Handle(query, CancellationToken.None));
-
-            mockUserRepo.Verify(r => r.GetByIdAsync(userId), Times.Once);
+            await Assert.ThrowsAsync<NotFoundException>(() =>
+                handler.Handle(query, CancellationToken.None));
         }
     }
 }

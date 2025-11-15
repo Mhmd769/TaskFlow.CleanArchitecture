@@ -1,28 +1,70 @@
 ﻿using FluentAssertions;
-using Microsoft.EntityFrameworkCore;
 using Moq;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using TaskFlow.Application.Common;
 using TaskFlow.Application.DTOs.ProjectDTOs;
 using TaskFlow.Application.Features.Projects.Queries.GetPrpjectById;
 using TaskFlow.Domain.Entities;
+using TaskFlow.Domain.Exceptions;
 using TaskFlow.Domain.Interfaces;
 using Xunit;
 
 public class GetByIdProjectHandlerTests
 {
+    // -----------------------------
+    // 1️⃣ RETURN PROJECT FROM CACHE
+    // -----------------------------
     [Fact]
-    public async Task Handle_ShouldReturnMappedProject_WhenProjectExists()
+    public async Task Handle_ShouldReturnProject_FromCache()
     {
-        // Arrange
         var mockUnitOfWork = new Mock<IUnitOfWork>();
         var mockProjectRepo = new Mock<IRepository<Project>>();
         var mockMapper = new Mock<AutoMapper.IMapper>();
+        var mockCache = new Mock<ICacheService>();
+
+        var projectId = Guid.NewGuid();
+
+        var cachedProject = new ProjectDto
+        {
+            Id = projectId,
+            Name = "Cached Project",
+            Description = "From Cache",
+            TaskCount = 0,
+            OwnerName = "Owner X"
+        };
+
+        mockCache.Setup(c => c.GetAsync<ProjectDto>($"project:{projectId}"))
+                 .ReturnsAsync(cachedProject);
+
+        var handler = new GetProjectByIdHandler(
+            mockUnitOfWork.Object, mockMapper.Object, mockCache.Object);
+
+        var query = new GetProjectByIdQuery { ProjectId = projectId };
+
+        var result = await handler.Handle(query, CancellationToken.None);
+
+        result.Should().NotBeNull();
+        result.Name.Should().Be("Cached Project");
+
+        mockProjectRepo.Verify(r => r.GetByIdAsync(It.IsAny<Guid>()), Times.Never);
+    }
+
+    // -----------------------------------------
+    // 2️⃣ RETURN PROJECT FROM DB & CACHE IT
+    // -----------------------------------------
+    [Fact]
+    public async Task Handle_ShouldReturnMappedProject_WhenProjectExists_AndCacheIt()
+    {
+        var mockUnitOfWork = new Mock<IUnitOfWork>();
+        var mockProjectRepo = new Mock<IRepository<Project>>();
+        var mockMapper = new Mock<AutoMapper.IMapper>();
+        var mockCache = new Mock<ICacheService>();
 
         var user = new User { Id = Guid.NewGuid(), FullName = "Test User" };
+
         var project = new Project
         {
             Id = Guid.NewGuid(),
@@ -32,11 +74,15 @@ public class GetByIdProjectHandlerTests
             Tasks = new List<TaskItem>()
         };
 
-        // 🟢 Instead of using Query() and EF async:
+        mockUnitOfWork.Setup(u => u.Projects).Returns(mockProjectRepo.Object);
+
+        mockCache.Setup(c => c.GetAsync<ProjectDto>($"project:{project.Id}"))
+                 .ReturnsAsync((ProjectDto?)null);
+
         mockProjectRepo.Setup(r => r.GetByIdAsync(project.Id))
                        .ReturnsAsync(project);
 
-        mockMapper.Setup(m => m.Map<ProjectDto>(It.IsAny<Project>()))
+        mockMapper.Setup(m => m.Map<ProjectDto>(project))
                   .Returns(new ProjectDto
                   {
                       Id = project.Id,
@@ -46,18 +92,48 @@ public class GetByIdProjectHandlerTests
                       TaskCount = project.Tasks.Count
                   });
 
-        mockUnitOfWork.Setup(u => u.Projects).Returns(mockProjectRepo.Object);
-
-        var handler = new GetProjectByIdHandler(mockUnitOfWork.Object, mockMapper.Object);
+        var handler = new GetProjectByIdHandler(
+            mockUnitOfWork.Object, mockMapper.Object, mockCache.Object);
 
         var query = new GetProjectByIdQuery { ProjectId = project.Id };
 
-        // Act
         var result = await handler.Handle(query, CancellationToken.None);
 
-        // Assert
         result.Should().NotBeNull();
-        result.Id.Should().Be(project.Id);
-        result.OwnerName.Should().Be("Test User");
+        result.Name.Should().Be("Test Project");
+
+        mockCache.Verify(c => c.SetAsync($"project:{project.Id}",
+                                         It.IsAny<ProjectDto>(),
+                                         It.IsAny<TimeSpan>()), Times.Once);
+    }
+
+    // -------------------------------------
+    // 3️⃣ PROJECT NOT FOUND → THROW ERROR
+    // -------------------------------------
+    [Fact]
+    public async Task Handle_ShouldThrowNotFoundException_WhenProjectDoesNotExist()
+    {
+        var mockUnitOfWork = new Mock<IUnitOfWork>();
+        var mockProjectRepo = new Mock<IRepository<Project>>();
+        var mockMapper = new Mock<AutoMapper.IMapper>();
+        var mockCache = new Mock<ICacheService>();
+
+        var projectId = Guid.NewGuid();
+
+        mockUnitOfWork.Setup(u => u.Projects).Returns(mockProjectRepo.Object);
+
+        mockCache.Setup(c => c.GetAsync<ProjectDto>($"project:{projectId}"))
+                 .ReturnsAsync((ProjectDto?)null);
+
+        mockProjectRepo.Setup(r => r.GetByIdAsync(projectId))
+                       .ReturnsAsync((Project?)null);
+
+        var handler = new GetProjectByIdHandler(
+            mockUnitOfWork.Object, mockMapper.Object, mockCache.Object);
+
+        var query = new GetProjectByIdQuery { ProjectId = projectId };
+
+        await Assert.ThrowsAsync<NotFoundException>(() =>
+            handler.Handle(query, CancellationToken.None));
     }
 }

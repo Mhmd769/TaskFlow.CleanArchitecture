@@ -77,9 +77,9 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 
 builder.Services.AddStackExchangeRedisCache(options =>
 {
-    options.Configuration = builder.Configuration.GetConnectionString("RedisConnection");
-    options.InstanceName = "TaskFlow_";
+    options.Configuration = builder.Configuration["Redis:ConnectionString"];
 });
+
 
 builder.Services.AddScoped<ICacheService, RedisCacheService>();
 

@@ -10,7 +10,7 @@ obj/
 .vscode/
 
 # Logs
-*.log
+*.logs
 
 # Dotnet artifacts
 project.lock.json

@@ -62,7 +62,6 @@ namespace TaskFlow.Tests
             var mockMapper = new Mock<AutoMapper.IMapper>();
             var mockCache = new Mock<ICacheService>();
 
-            var user = new User { Id = Guid.NewGuid(), FullName = "Test User" };
             var project = new Project
             {
                 Id = Guid.NewGuid(),
@@ -75,7 +74,6 @@ namespace TaskFlow.Tests
                 Id = Guid.NewGuid(),
                 Title = "Test Task",
                 Description = "Task Desc",
-                AssignedUser = user,
                 Project = project
             };
 
@@ -93,7 +91,6 @@ namespace TaskFlow.Tests
                           Id = task.Id,
                           Title = task.Title,
                           Description = task.Description,
-                          AssignedUserId = user.Id,
                           ProjectId = project.Id
                       });
 

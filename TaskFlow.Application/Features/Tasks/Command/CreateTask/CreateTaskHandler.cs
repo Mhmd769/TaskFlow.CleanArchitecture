@@ -21,13 +21,20 @@ namespace TaskFlow.Application.Features.Tasks.Command.CreateTask
             _unitOfWork = unitOfWork;
             _mapper = mapper;
         }
-        public async  Task<TaskDto> Handle(CreateTaskCommand request, CancellationToken cancellationToken)
+        public async Task<TaskDto> Handle(CreateTaskCommand request, CancellationToken cancellationToken)
         {
+            var task = _mapper.Map<TaskItem>(request.Task);
 
-            var task= _mapper.Map<TaskItem>(request.Task);
+            // Map multiple assigned users
+            task.AssignedUsers = request.Task.AssignedUsers?
+                .Select(u => new TaskAssignedUser { UserId = u.Id })
+                .ToList() ?? new List<TaskAssignedUser>();
+
             await _unitOfWork.Tasks.AddAsync(task);
             await _unitOfWork.SaveAsync();
+
             return _mapper.Map<TaskDto>(task);
         }
+
     }
 }

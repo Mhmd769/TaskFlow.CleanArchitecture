@@ -45,7 +45,6 @@ namespace TaskFlow.Tests.Integration_Test
                 Title = "Integration Test Task",
                 Description = "Testing task creation",
                 ProjectId = createdProject.Id,
-                AssignedUserId = userId,
                 DueDate = DateTime.UtcNow.AddDays(7)
             };
 
@@ -55,7 +54,6 @@ namespace TaskFlow.Tests.Integration_Test
             createdTask.Should().NotBeNull();
             createdTask.Title.Should().Be("Integration Test Task");
             createdTask.ProjectId.Should().Be(createdProject.Id);
-            createdTask.AssignedUserId.Should().Be(userId);
 
         }
     }

@@ -39,7 +39,6 @@ namespace TaskFlow.Tests
                 {
                     Title = dto.Title,
                     Description = dto.Description,
-                    AssignedUserId = dto.AssignedUserId,
                     ProjectId = dto.ProjectId
                 });
 
@@ -48,7 +47,6 @@ namespace TaskFlow.Tests
                 {
                     Title = t.Title,
                     Description = t.Description,
-                    AssignedUserId = t.AssignedUserId,
                     DueDate = t.DueDate,
                     ProjectId = t.ProjectId
                 });
@@ -70,8 +68,7 @@ namespace TaskFlow.Tests
                 Title = "Task 1",
                 Description = "Task Description",
                 DueDate = DateTime.UtcNow.AddDays(7),
-                ProjectId = projectId,
-                AssignedUserId = ownerId
+                ProjectId = projectId
             };
             var command = new CreateTaskCommand(dto);
 
@@ -80,7 +77,6 @@ namespace TaskFlow.Tests
 
             result.Should().NotBeNull();
             result.Title.Should().Be("Task 1");
-            result.AssignedUserId.Should().Be(ownerId);
             result.ProjectId.Should().Be(projectId);
 
             mockTaskRepo.Verify(r => r.AddAsync(It.IsAny<TaskItem>()), Times.Once);

@@ -1,4 +1,5 @@
-﻿using FluentValidation;
+﻿using System;
+using FluentValidation;
 using TaskFlow.Application.Features.Tasks.Command.CreateTask;
 
 public class CreateTaskCommandValidator : AbstractValidator<CreateTaskCommand>
@@ -17,8 +18,7 @@ public class CreateTaskCommandValidator : AbstractValidator<CreateTaskCommand>
             .NotEmpty().WithMessage("ProjectId is required.");
 
         RuleFor(x => x.Task.DueDate)
-            .Must(date => date == null || date > DateTime.UtcNow)
-            .WithMessage("Due date must be in the future.")
-            .When(x => x.Task.DueDate.HasValue);
+            .Must(date => date == null || date.Value.ToUniversalTime().Date >= DateTime.UtcNow.Date)
+            .WithMessage("Due date cannot be in the past.");
     }
 }

@@ -1,0 +1,279 @@
+2025-11-19 14:59:18.456 +02:00 [WRN] The ASP.NET Core developer certificate is not trusted. For information about trusting the ASP.NET Core developer certificate, see https://aka.ms/aspnet/https-trust-dev-cert.
+2025-11-19 15:00:32.879 +02:00 [INF] Handling request: LoginUserQuery with data: {"LoginDto":{"Email":"superadmin@taskflow.com","Password":"Admin@123","$type":"LoginDto"},"$type":"LoginUserQuery"}
+2025-11-19 15:00:34.045 +02:00 [INF] Handled request: LoginUserQuery with response: {"Token":"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1laWRlbnRpZmllciI6IjlhYmUxZDIwLTlkOWEtNDFiZC04ZjQ2LWQyNzA5NTAyODQyNiIsImh0dHA6Ly9zY2hlbWFzLnhtbHNvYXAub3JnL3dzLzIwMDUvMDUvaWRlbnRpdHkvY2xhaW1zL25hbWUiOiJzdXBlcmFkbWluIiwiaHR0cDovL3NjaGVtYXMubWljcm9zb2Z0LmNvbS93cy8yMDA4LzA2L2lkZW50aXR5L2NsYWltcy9yb2xlIjoiU3VwZXJBZG1pbiIsImV4cCI6MTc2NDE2MjAzMywiaXNzIjoiVGFza0Zsb3dBUEkiLCJhdWQiOiJUYXNrRmxvd0NsaWVudCJ9.DaybYjCvbA2Qz5MpCA_DKfZoG4bFVuPH67XI-vjX1sI","Role":"SuperAdmin","Username":"superadmin","$type":"LoginResponseDto"}
+2025-11-19 15:00:50.046 +02:00 [INF] Handling request: GetAllUserQuery with data: {"$type":"GetAllUserQuery"}
+2025-11-19 15:00:50.454 +02:00 [WRN] You do not have a valid license key for the Lucky Penny software AutoMapper. This is allowed for development and testing scenarios. If you are running in production you are required to have a licensed version. Please visit https://luckypennysoftware.com to obtain a valid license.
+2025-11-19 15:01:06.078 +02:00 [ERR] Unhandled exception
+StackExchange.Redis.RedisConnectionException: The message timed out in the backlog attempting to send because no connection became available (5000ms) - Last Connection Exception: It was not possible to connect to the redis server(s) localhost:6379/Interactive. ConnectTimeout, command=HMGET, timeout: 5000, inst: 0, qu: 0, qs: 0, aw: False, bw: CheckingForTimeout, rs: NotStarted, ws: Idle, in: 0, last-in: 0, cur-in: 0, sync-ops: 0, async-ops: 1, serverEndpoint: localhost:6379, conn-sec: n/a, aoc: 0, mc: 1/1/0, mgr: 10 of 10 available, clientName: MAHDI-104180(SE.Redis-v2.9.32.54708), IOCP: (Busy=0,Free=1000,Min=1,Max=1000), WORKER: (Busy=1,Free=32766,Min=12,Max=32767), POOL: (Threads=7,QueuedItems=0,CompletedItems=178,Timers=8), v: 2.9.32.54708 (Please take a look at this article for some common client-side issues that can cause timeouts: https://stackexchange.github.io/StackExchange.Redis/Timeouts)
+ ---> StackExchange.Redis.RedisConnectionException: It was not possible to connect to the redis server(s) localhost:6379/Interactive. ConnectTimeout
+   --- End of inner exception stack trace ---
+   at Microsoft.Extensions.Caching.StackExchangeRedis.RedisCache.GetAndRefreshAsync(String key, Boolean getData, CancellationToken token)
+   at Microsoft.Extensions.Caching.StackExchangeRedis.RedisCache.GetAsync(String key, CancellationToken token)
+   at Microsoft.Extensions.Caching.Distributed.DistributedCacheExtensions.GetStringAsync(IDistributedCache cache, String key, CancellationToken token)
+   at TaskFlow.Infrastructure.Services.RedisCacheService.GetAsync[T](String key) in C:\Users\user\source\repos\TaskFlowpro\TaskFlow.Infrastructure\Services\RedisCacheService.cs:line 17
+   at TaskFlow.Application.Features.Users.Queries.GetAllUsers.GetAllUserHandler.Handle(GetAllUserQuery request, CancellationToken cancellationToken) in C:\Users\user\source\repos\TaskFlowpro\TaskFlow.Application\Features\Users\Queries\GetAllUsers\GetAllUserHandler.cs:line 32
+   at TaskFlow.Application.Behaviors.LoggingBehavior`2.Handle(TRequest request, RequestHandlerDelegate`1 next, CancellationToken cancellationToken) in C:\Users\user\source\repos\TaskFlowpro\TaskFlow.Application\Behaviors\LoggingBehavior.cs:line 26
+   at ValidationBehavior`2.Handle(TRequest request, RequestHandlerDelegate`1 next, CancellationToken cancellationToken) in C:\Users\user\source\repos\TaskFlowpro\TaskFlow.Application\Behaviors\ValidationBehavior.cs:line 38
+   at TaskFlow.API.Controllers.UsersController.GetAll() in C:\Users\user\source\repos\TaskFlowpro\TaskFlow.APIs\Controllers\UsersController.cs:line 30
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ActionMethodExecutor.TaskOfIActionResultExecutor.Execute(ActionContext actionContext, IActionResultTypeMapper mapper, ObjectMethodExecutor executor, Object controller, Object[] arguments)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.<InvokeActionMethodAsync>g__Awaited|12_0(ControllerActionInvoker invoker, ValueTask`1 actionResultValueTask)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.<InvokeNextActionFilterAsync>g__Awaited|10_0(ControllerActionInvoker invoker, Task lastTask, State next, Scope scope, Object state, Boolean isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.Rethrow(ActionExecutedContextSealed context)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.Next(State& next, Scope& scope, Object& state, Boolean& isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.<InvokeInnerFilterAsync>g__Awaited|13_0(ControllerActionInvoker invoker, Task lastTask, State next, Scope scope, Object state, Boolean isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeFilterPipelineAsync>g__Awaited|20_0(ResourceInvoker invoker, Task lastTask, State next, Scope scope, Object state, Boolean isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeAsync>g__Awaited|17_0(ResourceInvoker invoker, Task task, IDisposable scope)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeAsync>g__Awaited|17_0(ResourceInvoker invoker, Task task, IDisposable scope)
+   at Microsoft.AspNetCore.Authorization.AuthorizationMiddleware.Invoke(HttpContext context)
+   at Microsoft.AspNetCore.Authentication.AuthenticationMiddleware.Invoke(HttpContext context)
+   at TaskFlow.API.Middlewares.ExceptionMiddleware.InvokeAsync(HttpContext context) in C:\Users\user\source\repos\TaskFlowpro\TaskFlow.APIs\Middlewares\ExceptionMiddleware.cs:line 20
+2025-11-19 15:01:47.831 +02:00 [INF] Handling request: GetAllUserQuery with data: {"$type":"GetAllUserQuery"}
+2025-11-19 15:01:48.615 +02:00 [INF] Handled request: GetAllUserQuery with response: [{"Id":"4c727141-c47f-4918-f07f-08de1ad9d829","Username":"mhmd78","FullName":"mhmdALI","Email":"mhmdd12@gmail.com","PhoneNumber":"76829191","Role":"User","CreatedAt":"2025-11-03T13:06:46.5597350","$type":"UserDto"},{"Id":"d69c7f7a-4d74-4590-4146-08de1b99d400","Username":"ali91","FullName":"alimhmd","Email":"string","PhoneNumber":"string","Role":"User","CreatedAt":"2025-11-04T12:01:02.8960015","$type":"UserDto"},{"Id":"a69cad42-e548-461b-8be4-5fee4e8b4703","Username":"mhmd23","FullName":"alii","Email":"ali@gmail.com","PhoneNumber":"7272727281","Role":"User","CreatedAt":"2025-11-14T12:08:40.9987422","$type":"UserDto"},{"Id":"9abe1d20-9d9a-41bd-8f46-d27095028426","Username":"superadmin","FullName":"System Super Admin","Email":"superadmin@taskflow.com","PhoneNumber":"00000000","Role":"SuperAdmin","CreatedAt":"2025-11-09T14:25:32.5200231","$type":"UserDto"},{"Id":"f64280bf-02be-45a8-ba6d-da4befc185e7","Username":"hello","FullName":"ahmad","Email":"ahmad12@gmail.com","PhoneNumber":"12345678","Role":"User","CreatedAt":"2025-11-05T14:12:36.6315370","$type":"UserDto"}]
+2025-11-19 15:01:58.328 +02:00 [INF] Handling request: GetAllProjectsQuery with data: {"$type":"GetAllProjectsQuery"}
+2025-11-19 15:01:58.661 +02:00 [INF] Handled request: GetAllProjectsQuery with response: [{"Id":"0adf578f-c2f1-4ec2-0669-08de1b966085","Name":"Iphone 17 Task","Description":"implmenting a Operating system for this phone","CreatedAt":"2025-11-04T11:36:21.1189665","OwnerName":"mhmdALI","TaskCount":1,"$type":"ProjectDto"}]
+2025-11-19 15:03:39.048 +02:00 [ERR] Unhandled exception
+FluentValidation.ValidationException: Validation failed: 
+ -- Task.DueDate: Due date must be in the future. Severity: Error
+   at ValidationBehavior`2.Handle(TRequest request, RequestHandlerDelegate`1 next, CancellationToken cancellationToken) in C:\Users\user\source\repos\TaskFlowpro\TaskFlow.Application\Behaviors\ValidationBehavior.cs:line 34
+   at TaskFlow.API.Controllers.TasksController.Create(CreateTaskDto dto) in C:\Users\user\source\repos\TaskFlowpro\TaskFlow.APIs\Controllers\TasksController.cs:line 49
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ActionMethodExecutor.TaskOfIActionResultExecutor.Execute(ActionContext actionContext, IActionResultTypeMapper mapper, ObjectMethodExecutor executor, Object controller, Object[] arguments)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.<InvokeActionMethodAsync>g__Awaited|12_0(ControllerActionInvoker invoker, ValueTask`1 actionResultValueTask)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.<InvokeNextActionFilterAsync>g__Awaited|10_0(ControllerActionInvoker invoker, Task lastTask, State next, Scope scope, Object state, Boolean isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.Rethrow(ActionExecutedContextSealed context)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.Next(State& next, Scope& scope, Object& state, Boolean& isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.InvokeInnerFilterAsync()
+--- End of stack trace from previous location ---
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeFilterPipelineAsync>g__Awaited|20_0(ResourceInvoker invoker, Task lastTask, State next, Scope scope, Object state, Boolean isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeAsync>g__Awaited|17_0(ResourceInvoker invoker, Task task, IDisposable scope)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeAsync>g__Awaited|17_0(ResourceInvoker invoker, Task task, IDisposable scope)
+   at Microsoft.AspNetCore.Authorization.AuthorizationMiddleware.Invoke(HttpContext context)
+   at Microsoft.AspNetCore.Authentication.AuthenticationMiddleware.Invoke(HttpContext context)
+   at TaskFlow.API.Middlewares.ExceptionMiddleware.InvokeAsync(HttpContext context) in C:\Users\user\source\repos\TaskFlowpro\TaskFlow.APIs\Middlewares\ExceptionMiddleware.cs:line 20
+2025-11-19 15:03:59.265 +02:00 [ERR] Unhandled exception
+FluentValidation.ValidationException: Validation failed: 
+ -- Task.DueDate: Due date must be in the future. Severity: Error
+   at ValidationBehavior`2.Handle(TRequest request, RequestHandlerDelegate`1 next, CancellationToken cancellationToken) in C:\Users\user\source\repos\TaskFlowpro\TaskFlow.Application\Behaviors\ValidationBehavior.cs:line 34
+   at TaskFlow.API.Controllers.TasksController.Create(CreateTaskDto dto) in C:\Users\user\source\repos\TaskFlowpro\TaskFlow.APIs\Controllers\TasksController.cs:line 49
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ActionMethodExecutor.TaskOfIActionResultExecutor.Execute(ActionContext actionContext, IActionResultTypeMapper mapper, ObjectMethodExecutor executor, Object controller, Object[] arguments)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.<InvokeActionMethodAsync>g__Awaited|12_0(ControllerActionInvoker invoker, ValueTask`1 actionResultValueTask)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.<InvokeNextActionFilterAsync>g__Awaited|10_0(ControllerActionInvoker invoker, Task lastTask, State next, Scope scope, Object state, Boolean isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.Rethrow(ActionExecutedContextSealed context)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.Next(State& next, Scope& scope, Object& state, Boolean& isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.InvokeInnerFilterAsync()
+--- End of stack trace from previous location ---
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeFilterPipelineAsync>g__Awaited|20_0(ResourceInvoker invoker, Task lastTask, State next, Scope scope, Object state, Boolean isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeAsync>g__Awaited|17_0(ResourceInvoker invoker, Task task, IDisposable scope)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeAsync>g__Awaited|17_0(ResourceInvoker invoker, Task task, IDisposable scope)
+   at Microsoft.AspNetCore.Authorization.AuthorizationMiddleware.Invoke(HttpContext context)
+   at Microsoft.AspNetCore.Authentication.AuthenticationMiddleware.Invoke(HttpContext context)
+   at TaskFlow.API.Middlewares.ExceptionMiddleware.InvokeAsync(HttpContext context) in C:\Users\user\source\repos\TaskFlowpro\TaskFlow.APIs\Middlewares\ExceptionMiddleware.cs:line 20
+2025-11-19 15:05:35.773 +02:00 [ERR] Unhandled exception
+FluentValidation.ValidationException: Validation failed: 
+ -- Task.DueDate: Due date must be in the future. Severity: Error
+   at ValidationBehavior`2.Handle(TRequest request, RequestHandlerDelegate`1 next, CancellationToken cancellationToken) in C:\Users\user\source\repos\TaskFlowpro\TaskFlow.Application\Behaviors\ValidationBehavior.cs:line 34
+   at TaskFlow.API.Controllers.TasksController.Create(CreateTaskDto dto) in C:\Users\user\source\repos\TaskFlowpro\TaskFlow.APIs\Controllers\TasksController.cs:line 49
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ActionMethodExecutor.TaskOfIActionResultExecutor.Execute(ActionContext actionContext, IActionResultTypeMapper mapper, ObjectMethodExecutor executor, Object controller, Object[] arguments)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.<InvokeActionMethodAsync>g__Awaited|12_0(ControllerActionInvoker invoker, ValueTask`1 actionResultValueTask)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.<InvokeNextActionFilterAsync>g__Awaited|10_0(ControllerActionInvoker invoker, Task lastTask, State next, Scope scope, Object state, Boolean isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.Rethrow(ActionExecutedContextSealed context)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.Next(State& next, Scope& scope, Object& state, Boolean& isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.InvokeInnerFilterAsync()
+--- End of stack trace from previous location ---
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeFilterPipelineAsync>g__Awaited|20_0(ResourceInvoker invoker, Task lastTask, State next, Scope scope, Object state, Boolean isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeAsync>g__Awaited|17_0(ResourceInvoker invoker, Task task, IDisposable scope)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeAsync>g__Awaited|17_0(ResourceInvoker invoker, Task task, IDisposable scope)
+   at Microsoft.AspNetCore.Authorization.AuthorizationMiddleware.Invoke(HttpContext context)
+   at Microsoft.AspNetCore.Authentication.AuthenticationMiddleware.Invoke(HttpContext context)
+   at TaskFlow.API.Middlewares.ExceptionMiddleware.InvokeAsync(HttpContext context) in C:\Users\user\source\repos\TaskFlowpro\TaskFlow.APIs\Middlewares\ExceptionMiddleware.cs:line 20
+2025-11-19 15:06:29.493 +02:00 [ERR] Unhandled exception
+FluentValidation.ValidationException: Validation failed: 
+ -- Task.DueDate: Due date must be in the future. Severity: Error
+   at ValidationBehavior`2.Handle(TRequest request, RequestHandlerDelegate`1 next, CancellationToken cancellationToken) in C:\Users\user\source\repos\TaskFlowpro\TaskFlow.Application\Behaviors\ValidationBehavior.cs:line 34
+   at TaskFlow.API.Controllers.TasksController.Create(CreateTaskDto dto) in C:\Users\user\source\repos\TaskFlowpro\TaskFlow.APIs\Controllers\TasksController.cs:line 49
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ActionMethodExecutor.TaskOfIActionResultExecutor.Execute(ActionContext actionContext, IActionResultTypeMapper mapper, ObjectMethodExecutor executor, Object controller, Object[] arguments)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.<InvokeActionMethodAsync>g__Awaited|12_0(ControllerActionInvoker invoker, ValueTask`1 actionResultValueTask)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.<InvokeNextActionFilterAsync>g__Awaited|10_0(ControllerActionInvoker invoker, Task lastTask, State next, Scope scope, Object state, Boolean isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.Rethrow(ActionExecutedContextSealed context)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.Next(State& next, Scope& scope, Object& state, Boolean& isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.InvokeInnerFilterAsync()
+--- End of stack trace from previous location ---
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeFilterPipelineAsync>g__Awaited|20_0(ResourceInvoker invoker, Task lastTask, State next, Scope scope, Object state, Boolean isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeAsync>g__Awaited|17_0(ResourceInvoker invoker, Task task, IDisposable scope)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeAsync>g__Awaited|17_0(ResourceInvoker invoker, Task task, IDisposable scope)
+   at Microsoft.AspNetCore.Authorization.AuthorizationMiddleware.Invoke(HttpContext context)
+   at Microsoft.AspNetCore.Authentication.AuthenticationMiddleware.Invoke(HttpContext context)
+   at TaskFlow.API.Middlewares.ExceptionMiddleware.InvokeAsync(HttpContext context) in C:\Users\user\source\repos\TaskFlowpro\TaskFlow.APIs\Middlewares\ExceptionMiddleware.cs:line 20
+2025-11-19 15:11:51.743 +02:00 [INF] Handling request: LoginUserQuery with data: {"LoginDto":{"Email":"superadmin@taskflow.com","Password":"Admin@123","$type":"LoginDto"},"$type":"LoginUserQuery"}
+2025-11-19 15:11:52.235 +02:00 [INF] Handled request: LoginUserQuery with response: {"Token":"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1laWRlbnRpZmllciI6IjlhYmUxZDIwLTlkOWEtNDFiZC04ZjQ2LWQyNzA5NTAyODQyNiIsImh0dHA6Ly9zY2hlbWFzLnhtbHNvYXAub3JnL3dzLzIwMDUvMDUvaWRlbnRpdHkvY2xhaW1zL25hbWUiOiJzdXBlcmFkbWluIiwiaHR0cDovL3NjaGVtYXMubWljcm9zb2Z0LmNvbS93cy8yMDA4LzA2L2lkZW50aXR5L2NsYWltcy9yb2xlIjoiU3VwZXJBZG1pbiIsImV4cCI6MTc2NDE2MjcxMiwiaXNzIjoiVGFza0Zsb3dBUEkiLCJhdWQiOiJUYXNrRmxvd0NsaWVudCJ9.5M2yByvy7qtM_W7sEadHmTltMq-VoX5TSqZhkAAzP78","Role":"SuperAdmin","Username":"superadmin","$type":"LoginResponseDto"}
+2025-11-19 15:12:04.922 +02:00 [INF] Handling request: GetAllUserQuery with data: {"$type":"GetAllUserQuery"}
+2025-11-19 15:12:04.997 +02:00 [INF] Handled request: GetAllUserQuery with response: [{"Id":"4c727141-c47f-4918-f07f-08de1ad9d829","Username":"mhmd78","FullName":"mhmdALI","Email":"mhmdd12@gmail.com","PhoneNumber":"76829191","Role":"User","CreatedAt":"2025-11-03T13:06:46.5597350","$type":"UserDto"},{"Id":"d69c7f7a-4d74-4590-4146-08de1b99d400","Username":"ali91","FullName":"alimhmd","Email":"string","PhoneNumber":"string","Role":"User","CreatedAt":"2025-11-04T12:01:02.8960015","$type":"UserDto"},{"Id":"a69cad42-e548-461b-8be4-5fee4e8b4703","Username":"mhmd23","FullName":"alii","Email":"ali@gmail.com","PhoneNumber":"7272727281","Role":"User","CreatedAt":"2025-11-14T12:08:40.9987422","$type":"UserDto"},{"Id":"9abe1d20-9d9a-41bd-8f46-d27095028426","Username":"superadmin","FullName":"System Super Admin","Email":"superadmin@taskflow.com","PhoneNumber":"00000000","Role":"SuperAdmin","CreatedAt":"2025-11-09T14:25:32.5200231","$type":"UserDto"},{"Id":"f64280bf-02be-45a8-ba6d-da4befc185e7","Username":"hello","FullName":"ahmad","Email":"ahmad12@gmail.com","PhoneNumber":"12345678","Role":"User","CreatedAt":"2025-11-05T14:12:36.6315370","$type":"UserDto"}]
+2025-11-19 15:12:08.672 +02:00 [INF] Handling request: GetAllProjectsQuery with data: {"$type":"GetAllProjectsQuery"}
+2025-11-19 15:12:08.749 +02:00 [INF] Handled request: GetAllProjectsQuery with response: [{"Id":"0adf578f-c2f1-4ec2-0669-08de1b966085","Name":"Iphone 17 Task","Description":"implmenting a Operating system for this phone","CreatedAt":"2025-11-04T11:36:21.1189665","OwnerName":"mhmdALI","TaskCount":1,"$type":"ProjectDto"}]
+2025-11-19 15:13:45.073 +02:00 [INF] Handling request: LoginUserQuery with data: {"LoginDto":{"Email":"superadmin@taskflow.com","Password":"Admin@123","$type":"LoginDto"},"$type":"LoginUserQuery"}
+2025-11-19 15:13:45.420 +02:00 [INF] Handled request: LoginUserQuery with response: {"Token":"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1laWRlbnRpZmllciI6IjlhYmUxZDIwLTlkOWEtNDFiZC04ZjQ2LWQyNzA5NTAyODQyNiIsImh0dHA6Ly9zY2hlbWFzLnhtbHNvYXAub3JnL3dzLzIwMDUvMDUvaWRlbnRpdHkvY2xhaW1zL25hbWUiOiJzdXBlcmFkbWluIiwiaHR0cDovL3NjaGVtYXMubWljcm9zb2Z0LmNvbS93cy8yMDA4LzA2L2lkZW50aXR5L2NsYWltcy9yb2xlIjoiU3VwZXJBZG1pbiIsImV4cCI6MTc2NDE2MjgyNSwiaXNzIjoiVGFza0Zsb3dBUEkiLCJhdWQiOiJUYXNrRmxvd0NsaWVudCJ9.SJh_6wyAgV2iZrjYPiFiB--oPdubjoGOpBnWIVHPYFM","Role":"SuperAdmin","Username":"superadmin","$type":"LoginResponseDto"}
+2025-11-19 15:14:09.049 +02:00 [INF] Handling request: GetAllProjectsQuery with data: {"$type":"GetAllProjectsQuery"}
+2025-11-19 15:14:09.092 +02:00 [INF] Handled request: GetAllProjectsQuery with response: [{"Id":"0adf578f-c2f1-4ec2-0669-08de1b966085","Name":"Iphone 17 Task","Description":"implmenting a Operating system for this phone","CreatedAt":"2025-11-04T11:36:21.1189665","OwnerName":"mhmdALI","TaskCount":1,"$type":"ProjectDto"}]
+2025-11-19 15:14:41.818 +02:00 [INF] Handling request: GetAllUserQuery with data: {"$type":"GetAllUserQuery"}
+2025-11-19 15:14:41.849 +02:00 [INF] Handled request: GetAllUserQuery with response: [{"Id":"4c727141-c47f-4918-f07f-08de1ad9d829","Username":"mhmd78","FullName":"mhmdALI","Email":"mhmdd12@gmail.com","PhoneNumber":"76829191","Role":"User","CreatedAt":"2025-11-03T13:06:46.5597350","$type":"UserDto"},{"Id":"d69c7f7a-4d74-4590-4146-08de1b99d400","Username":"ali91","FullName":"alimhmd","Email":"string","PhoneNumber":"string","Role":"User","CreatedAt":"2025-11-04T12:01:02.8960015","$type":"UserDto"},{"Id":"a69cad42-e548-461b-8be4-5fee4e8b4703","Username":"mhmd23","FullName":"alii","Email":"ali@gmail.com","PhoneNumber":"7272727281","Role":"User","CreatedAt":"2025-11-14T12:08:40.9987422","$type":"UserDto"},{"Id":"9abe1d20-9d9a-41bd-8f46-d27095028426","Username":"superadmin","FullName":"System Super Admin","Email":"superadmin@taskflow.com","PhoneNumber":"00000000","Role":"SuperAdmin","CreatedAt":"2025-11-09T14:25:32.5200231","$type":"UserDto"},{"Id":"f64280bf-02be-45a8-ba6d-da4befc185e7","Username":"hello","FullName":"ahmad","Email":"ahmad12@gmail.com","PhoneNumber":"12345678","Role":"User","CreatedAt":"2025-11-05T14:12:36.6315370","$type":"UserDto"}]
+2025-11-19 15:16:03.100 +02:00 [INF] Handling request: CreateProjectCommand with data: {"Project":{"Name":"hiii","Description":"hiiii","OwnerId":"9abe1d20-9d9a-41bd-8f46-d27095028426","$type":"CreateProjectDto"},"$type":"CreateProjectCommand"}
+2025-11-19 15:16:03.627 +02:00 [INF] Handled request: CreateProjectCommand with response: {"Id":"f8bfea58-c592-44d7-69d3-08de276dca5b","Name":"hiii","Description":"hiiii","CreatedAt":"2025-11-19T13:16:03.2415511Z","OwnerName":"System Super Admin","TaskCount":0,"$type":"ProjectDto"}
+2025-11-19 15:16:45.857 +02:00 [ERR] Unhandled exception
+System.Runtime.CompilerServices.HotReloadException: Attempted to invoke a deleted method implementation. This can happen when a method is deleted or its name or signature is changed while the application is running.
+   at TaskFlow.Application.DTOs.TaskDTOs.CreateTaskDto.set_AssignedUsers(List`1 value)
+   at System.Text.Json.Serialization.Metadata.JsonPropertyInfo`1.ReadJsonAndSetMember(Object obj, ReadStack& state, Utf8JsonReader& reader)
+   at System.Text.Json.Serialization.Converters.ObjectDefaultConverter`1.OnTryRead(Utf8JsonReader& reader, Type typeToConvert, JsonSerializerOptions options, ReadStack& state, T& value)
+   at System.Text.Json.Serialization.JsonConverter`1.TryRead(Utf8JsonReader& reader, Type typeToConvert, JsonSerializerOptions options, ReadStack& state, T& value, Boolean& isPopulatedValue)
+   at System.Text.Json.Serialization.JsonConverter`1.ReadCore(Utf8JsonReader& reader, T& value, JsonSerializerOptions options, ReadStack& state)
+   at System.Text.Json.Serialization.Metadata.JsonTypeInfo`1.ContinueDeserialize(ReadBufferState& bufferState, JsonReaderState& jsonReaderState, ReadStack& readStack, T& value)
+   at System.Text.Json.Serialization.Metadata.JsonTypeInfo`1.DeserializeAsync(Stream utf8Json, CancellationToken cancellationToken)
+   at System.Text.Json.Serialization.Metadata.JsonTypeInfo`1.DeserializeAsObjectAsync(Stream utf8Json, CancellationToken cancellationToken)
+   at Microsoft.AspNetCore.Mvc.Formatters.SystemTextJsonInputFormatter.ReadRequestBodyAsync(InputFormatterContext context, Encoding encoding)
+   at Microsoft.AspNetCore.Mvc.Formatters.SystemTextJsonInputFormatter.ReadRequestBodyAsync(InputFormatterContext context, Encoding encoding)
+   at Microsoft.AspNetCore.Mvc.ModelBinding.Binders.BodyModelBinder.BindModelAsync(ModelBindingContext bindingContext)
+   at Microsoft.AspNetCore.Mvc.ModelBinding.ParameterBinder.BindModelAsync(ActionContext actionContext, IModelBinder modelBinder, IValueProvider valueProvider, ParameterDescriptor parameter, ModelMetadata metadata, Object value, Object container)
+   at Microsoft.AspNetCore.Mvc.Controllers.ControllerBinderDelegateProvider.<>c__DisplayClass0_0.<<CreateBinderDelegate>g__Bind|0>d.MoveNext()
+--- End of stack trace from previous location ---
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.<InvokeInnerFilterAsync>g__Awaited|13_0(ControllerActionInvoker invoker, Task lastTask, State next, Scope scope, Object state, Boolean isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeFilterPipelineAsync>g__Awaited|20_0(ResourceInvoker invoker, Task lastTask, State next, Scope scope, Object state, Boolean isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeAsync>g__Awaited|17_0(ResourceInvoker invoker, Task task, IDisposable scope)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeAsync>g__Awaited|17_0(ResourceInvoker invoker, Task task, IDisposable scope)
+   at Microsoft.AspNetCore.Authorization.AuthorizationMiddleware.Invoke(HttpContext context)
+   at Microsoft.AspNetCore.Authentication.AuthenticationMiddleware.Invoke(HttpContext context)
+   at TaskFlow.API.Middlewares.ExceptionMiddleware.InvokeAsync(HttpContext context) in C:\Users\user\source\repos\TaskFlowpro\TaskFlow.APIs\Middlewares\ExceptionMiddleware.cs:line 20
+2025-11-19 15:20:37.399 +02:00 [INF] Handling request: LoginUserQuery with data: {"LoginDto":{"Email":"superadmin@taskflow.com","Password":"Admin@123","$type":"LoginDto"},"$type":"LoginUserQuery"}
+2025-11-19 15:20:38.499 +02:00 [INF] Handled request: LoginUserQuery with response: {"Token":"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1laWRlbnRpZmllciI6IjlhYmUxZDIwLTlkOWEtNDFiZC04ZjQ2LWQyNzA5NTAyODQyNiIsImh0dHA6Ly9zY2hlbWFzLnhtbHNvYXAub3JnL3dzLzIwMDUvMDUvaWRlbnRpdHkvY2xhaW1zL25hbWUiOiJzdXBlcmFkbWluIiwiaHR0cDovL3NjaGVtYXMubWljcm9zb2Z0LmNvbS93cy8yMDA4LzA2L2lkZW50aXR5L2NsYWltcy9yb2xlIjoiU3VwZXJBZG1pbiIsImV4cCI6MTc2NDE2MzIzOCwiaXNzIjoiVGFza0Zsb3dBUEkiLCJhdWQiOiJUYXNrRmxvd0NsaWVudCJ9.pt6j1VNlyUndwLhcqEY5opfvupndEPPncJLLGYsKO0o","Role":"SuperAdmin","Username":"superadmin","$type":"LoginResponseDto"}
+2025-11-19 15:21:05.992 +02:00 [ERR] Unhandled exception
+FluentValidation.ValidationException: Validation failed: 
+ -- Task.DueDate: Due date must be in the future. Severity: Error
+   at ValidationBehavior`2.Handle(TRequest request, RequestHandlerDelegate`1 next, CancellationToken cancellationToken) in C:\Users\user\source\repos\TaskFlowpro\TaskFlow.Application\Behaviors\ValidationBehavior.cs:line 34
+   at TaskFlow.API.Controllers.TasksController.Create(CreateTaskDto dto) in C:\Users\user\source\repos\TaskFlowpro\TaskFlow.APIs\Controllers\TasksController.cs:line 49
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ActionMethodExecutor.TaskOfIActionResultExecutor.Execute(ActionContext actionContext, IActionResultTypeMapper mapper, ObjectMethodExecutor executor, Object controller, Object[] arguments)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.<InvokeActionMethodAsync>g__Awaited|12_0(ControllerActionInvoker invoker, ValueTask`1 actionResultValueTask)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.<InvokeNextActionFilterAsync>g__Awaited|10_0(ControllerActionInvoker invoker, Task lastTask, State next, Scope scope, Object state, Boolean isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.Rethrow(ActionExecutedContextSealed context)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.Next(State& next, Scope& scope, Object& state, Boolean& isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.InvokeInnerFilterAsync()
+--- End of stack trace from previous location ---
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeFilterPipelineAsync>g__Awaited|20_0(ResourceInvoker invoker, Task lastTask, State next, Scope scope, Object state, Boolean isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeAsync>g__Awaited|17_0(ResourceInvoker invoker, Task task, IDisposable scope)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeAsync>g__Awaited|17_0(ResourceInvoker invoker, Task task, IDisposable scope)
+   at Microsoft.AspNetCore.Authorization.AuthorizationMiddleware.Invoke(HttpContext context)
+   at Microsoft.AspNetCore.Authentication.AuthenticationMiddleware.Invoke(HttpContext context)
+   at TaskFlow.API.Middlewares.ExceptionMiddleware.InvokeAsync(HttpContext context) in C:\Users\user\source\repos\TaskFlowpro\TaskFlow.APIs\Middlewares\ExceptionMiddleware.cs:line 20
+2025-11-19 15:21:25.244 +02:00 [ERR] Unhandled exception
+FluentValidation.ValidationException: Validation failed: 
+ -- Task.DueDate: Due date must be in the future. Severity: Error
+   at ValidationBehavior`2.Handle(TRequest request, RequestHandlerDelegate`1 next, CancellationToken cancellationToken) in C:\Users\user\source\repos\TaskFlowpro\TaskFlow.Application\Behaviors\ValidationBehavior.cs:line 34
+   at TaskFlow.API.Controllers.TasksController.Create(CreateTaskDto dto) in C:\Users\user\source\repos\TaskFlowpro\TaskFlow.APIs\Controllers\TasksController.cs:line 49
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ActionMethodExecutor.TaskOfIActionResultExecutor.Execute(ActionContext actionContext, IActionResultTypeMapper mapper, ObjectMethodExecutor executor, Object controller, Object[] arguments)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.<InvokeActionMethodAsync>g__Awaited|12_0(ControllerActionInvoker invoker, ValueTask`1 actionResultValueTask)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.<InvokeNextActionFilterAsync>g__Awaited|10_0(ControllerActionInvoker invoker, Task lastTask, State next, Scope scope, Object state, Boolean isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.Rethrow(ActionExecutedContextSealed context)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.Next(State& next, Scope& scope, Object& state, Boolean& isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.InvokeInnerFilterAsync()
+--- End of stack trace from previous location ---
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeFilterPipelineAsync>g__Awaited|20_0(ResourceInvoker invoker, Task lastTask, State next, Scope scope, Object state, Boolean isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeAsync>g__Awaited|17_0(ResourceInvoker invoker, Task task, IDisposable scope)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeAsync>g__Awaited|17_0(ResourceInvoker invoker, Task task, IDisposable scope)
+   at Microsoft.AspNetCore.Authorization.AuthorizationMiddleware.Invoke(HttpContext context)
+   at Microsoft.AspNetCore.Authentication.AuthenticationMiddleware.Invoke(HttpContext context)
+   at TaskFlow.API.Middlewares.ExceptionMiddleware.InvokeAsync(HttpContext context) in C:\Users\user\source\repos\TaskFlowpro\TaskFlow.APIs\Middlewares\ExceptionMiddleware.cs:line 20
+2025-11-19 15:21:26.689 +02:00 [ERR] Unhandled exception
+FluentValidation.ValidationException: Validation failed: 
+ -- Task.DueDate: Due date must be in the future. Severity: Error
+   at ValidationBehavior`2.Handle(TRequest request, RequestHandlerDelegate`1 next, CancellationToken cancellationToken) in C:\Users\user\source\repos\TaskFlowpro\TaskFlow.Application\Behaviors\ValidationBehavior.cs:line 34
+   at TaskFlow.API.Controllers.TasksController.Create(CreateTaskDto dto) in C:\Users\user\source\repos\TaskFlowpro\TaskFlow.APIs\Controllers\TasksController.cs:line 49
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ActionMethodExecutor.TaskOfIActionResultExecutor.Execute(ActionContext actionContext, IActionResultTypeMapper mapper, ObjectMethodExecutor executor, Object controller, Object[] arguments)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.<InvokeActionMethodAsync>g__Awaited|12_0(ControllerActionInvoker invoker, ValueTask`1 actionResultValueTask)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.<InvokeNextActionFilterAsync>g__Awaited|10_0(ControllerActionInvoker invoker, Task lastTask, State next, Scope scope, Object state, Boolean isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.Rethrow(ActionExecutedContextSealed context)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.Next(State& next, Scope& scope, Object& state, Boolean& isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.InvokeInnerFilterAsync()
+--- End of stack trace from previous location ---
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeFilterPipelineAsync>g__Awaited|20_0(ResourceInvoker invoker, Task lastTask, State next, Scope scope, Object state, Boolean isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeAsync>g__Awaited|17_0(ResourceInvoker invoker, Task task, IDisposable scope)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeAsync>g__Awaited|17_0(ResourceInvoker invoker, Task task, IDisposable scope)
+   at Microsoft.AspNetCore.Authorization.AuthorizationMiddleware.Invoke(HttpContext context)
+   at Microsoft.AspNetCore.Authentication.AuthenticationMiddleware.Invoke(HttpContext context)
+   at TaskFlow.API.Middlewares.ExceptionMiddleware.InvokeAsync(HttpContext context) in C:\Users\user\source\repos\TaskFlowpro\TaskFlow.APIs\Middlewares\ExceptionMiddleware.cs:line 20
+2025-11-19 15:21:27.570 +02:00 [ERR] Unhandled exception
+FluentValidation.ValidationException: Validation failed: 
+ -- Task.DueDate: Due date must be in the future. Severity: Error
+   at ValidationBehavior`2.Handle(TRequest request, RequestHandlerDelegate`1 next, CancellationToken cancellationToken) in C:\Users\user\source\repos\TaskFlowpro\TaskFlow.Application\Behaviors\ValidationBehavior.cs:line 34
+   at TaskFlow.API.Controllers.TasksController.Create(CreateTaskDto dto) in C:\Users\user\source\repos\TaskFlowpro\TaskFlow.APIs\Controllers\TasksController.cs:line 49
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ActionMethodExecutor.TaskOfIActionResultExecutor.Execute(ActionContext actionContext, IActionResultTypeMapper mapper, ObjectMethodExecutor executor, Object controller, Object[] arguments)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.<InvokeActionMethodAsync>g__Awaited|12_0(ControllerActionInvoker invoker, ValueTask`1 actionResultValueTask)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.<InvokeNextActionFilterAsync>g__Awaited|10_0(ControllerActionInvoker invoker, Task lastTask, State next, Scope scope, Object state, Boolean isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.Rethrow(ActionExecutedContextSealed context)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.Next(State& next, Scope& scope, Object& state, Boolean& isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.InvokeInnerFilterAsync()
+--- End of stack trace from previous location ---
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeFilterPipelineAsync>g__Awaited|20_0(ResourceInvoker invoker, Task lastTask, State next, Scope scope, Object state, Boolean isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeAsync>g__Awaited|17_0(ResourceInvoker invoker, Task task, IDisposable scope)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeAsync>g__Awaited|17_0(ResourceInvoker invoker, Task task, IDisposable scope)
+   at Microsoft.AspNetCore.Authorization.AuthorizationMiddleware.Invoke(HttpContext context)
+   at Microsoft.AspNetCore.Authentication.AuthenticationMiddleware.Invoke(HttpContext context)
+   at TaskFlow.API.Middlewares.ExceptionMiddleware.InvokeAsync(HttpContext context) in C:\Users\user\source\repos\TaskFlowpro\TaskFlow.APIs\Middlewares\ExceptionMiddleware.cs:line 20
+2025-11-19 15:34:32.557 +02:00 [INF] Handling request: LoginUserQuery with data: {"LoginDto":{"Email":"superadmin@taskflow.com","Password":"Admin@123","$type":"LoginDto"},"$type":"LoginUserQuery"}
+2025-11-19 15:34:33.608 +02:00 [INF] Handled request: LoginUserQuery with response: {"Token":"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1laWRlbnRpZmllciI6IjlhYmUxZDIwLTlkOWEtNDFiZC04ZjQ2LWQyNzA5NTAyODQyNiIsImh0dHA6Ly9zY2hlbWFzLnhtbHNvYXAub3JnL3dzLzIwMDUvMDUvaWRlbnRpdHkvY2xhaW1zL25hbWUiOiJzdXBlcmFkbWluIiwiaHR0cDovL3NjaGVtYXMubWljcm9zb2Z0LmNvbS93cy8yMDA4LzA2L2lkZW50aXR5L2NsYWltcy9yb2xlIjoiU3VwZXJBZG1pbiIsImV4cCI6MTc2NDE2NDA3MywiaXNzIjoiVGFza0Zsb3dBUEkiLCJhdWQiOiJUYXNrRmxvd0NsaWVudCJ9.qsLjoytHpDvellDsP1bJfN7KRdXskA0Af1aS9IQHwts","Role":"SuperAdmin","Username":"superadmin","$type":"LoginResponseDto"}
+2025-11-19 15:34:50.233 +02:00 [INF] Handling request: GetAllTasksQuery with data: {"$type":"GetAllTasksQuery"}
+2025-11-19 15:34:50.657 +02:00 [WRN] You do not have a valid license key for the Lucky Penny software AutoMapper. This is allowed for development and testing scenarios. If you are running in production you are required to have a licensed version. Please visit https://luckypennysoftware.com to obtain a valid license.
+2025-11-19 15:34:51.271 +02:00 [INF] Handled request: GetAllTasksQuery with response: [{"Id":"97d38900-582b-4e92-9d88-08de1b969ef6","Title":"string","Description":"string","Status":"WaitingToRun","CreatedAt":"2025-11-04T11:38:05.9124643","DueDate":"2025-11-04T11:52:04.3470000","ProjectId":"0adf578f-c2f1-4ec2-0669-08de1b966085","AssignedUserIds":[],"$type":"TaskDto"}]
+2025-11-19 15:35:06.885 +02:00 [INF] Handling request: CreateTaskCommand with data: {"Task":{"Title":"testtask","Description":"testtetetetetetetetetyuwdegwdgwqgfuoiewuygf","ProjectId":"f8bfea58-c592-44d7-69d3-08de276dca5b","DueDate":"2025-11-19T13:14:21.2560000Z","AssignedUsers":[{"Id":"4c727141-c47f-4918-f07f-08de1ad9d829","$type":"AssignedUserDto"},{"Id":"d69c7f7a-4d74-4590-4146-08de1b99d400","$type":"AssignedUserDto"},{"Id":"f64280bf-02be-45a8-ba6d-da4befc185e7","$type":"AssignedUserDto"}],"$type":"CreateTaskDto"},"$type":"CreateTaskCommand"}
+2025-11-19 15:35:07.436 +02:00 [ERR] Unhandled exception
+AutoMapper.AutoMapperMappingException: Error mapping types.
+
+Mapping types:
+CreateTaskDto -> TaskItem
+TaskFlow.Application.DTOs.TaskDTOs.CreateTaskDto -> TaskFlow.Domain.Entities.TaskItem
+
+Type Map configuration:
+CreateTaskDto -> TaskItem
+TaskFlow.Application.DTOs.TaskDTOs.CreateTaskDto -> TaskFlow.Domain.Entities.TaskItem
+
+Destination Member:
+AssignedUsers
+
+ ---> AutoMapper.AutoMapperMappingException: Missing type map configuration or unsupported mapping.
+
+Mapping types:
+AssignedUserDto -> TaskAssignedUser
+TaskFlow.Application.DTOs.TaskDTOs.AssignedUserDto -> TaskFlow.Domain.Entities.TaskAssignedUser
+   at lambda_method119(Closure, AssignedUserDto, TaskAssignedUser, ResolutionContext)
+   at lambda_method118(Closure, Object, TaskItem, ResolutionContext)
+   --- End of inner exception stack trace ---
+   at lambda_method118(Closure, Object, TaskItem, ResolutionContext)
+   at TaskFlow.Application.Features.Tasks.Command.CreateTask.CreateTaskHandler.Handle(CreateTaskCommand request, CancellationToken cancellationToken) in C:\Users\user\source\repos\TaskFlowpro\TaskFlow.Application\Features\Tasks\Command\CreateTask\CreateTaskHandler.cs:line 26
+   at TaskFlow.Application.Behaviors.LoggingBehavior`2.Handle(TRequest request, RequestHandlerDelegate`1 next, CancellationToken cancellationToken) in C:\Users\user\source\repos\TaskFlowpro\TaskFlow.Application\Behaviors\LoggingBehavior.cs:line 26
+   at ValidationBehavior`2.Handle(TRequest request, RequestHandlerDelegate`1 next, CancellationToken cancellationToken) in C:\Users\user\source\repos\TaskFlowpro\TaskFlow.Application\Behaviors\ValidationBehavior.cs:line 38
+   at TaskFlow.API.Controllers.TasksController.Create(CreateTaskDto dto) in C:\Users\user\source\repos\TaskFlowpro\TaskFlow.APIs\Controllers\TasksController.cs:line 49
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ActionMethodExecutor.TaskOfIActionResultExecutor.Execute(ActionContext actionContext, IActionResultTypeMapper mapper, ObjectMethodExecutor executor, Object controller, Object[] arguments)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.<InvokeActionMethodAsync>g__Awaited|12_0(ControllerActionInvoker invoker, ValueTask`1 actionResultValueTask)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.<InvokeNextActionFilterAsync>g__Awaited|10_0(ControllerActionInvoker invoker, Task lastTask, State next, Scope scope, Object state, Boolean isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.Rethrow(ActionExecutedContextSealed context)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.Next(State& next, Scope& scope, Object& state, Boolean& isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.InvokeInnerFilterAsync()
+--- End of stack trace from previous location ---
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeFilterPipelineAsync>g__Awaited|20_0(ResourceInvoker invoker, Task lastTask, State next, Scope scope, Object state, Boolean isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeAsync>g__Awaited|17_0(ResourceInvoker invoker, Task task, IDisposable scope)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeAsync>g__Awaited|17_0(ResourceInvoker invoker, Task task, IDisposable scope)
+   at Microsoft.AspNetCore.Authorization.AuthorizationMiddleware.Invoke(HttpContext context)
+   at Microsoft.AspNetCore.Authentication.AuthenticationMiddleware.Invoke(HttpContext context)
+   at TaskFlow.API.Middlewares.ExceptionMiddleware.InvokeAsync(HttpContext context) in C:\Users\user\source\repos\TaskFlowpro\TaskFlow.APIs\Middlewares\ExceptionMiddleware.cs:line 22
+2025-11-19 15:38:02.738 +02:00 [INF] Handling request: LoginUserQuery with data: {"LoginDto":{"Email":"superadmin@taskflow.com","Password":"Admin@123","$type":"LoginDto"},"$type":"LoginUserQuery"}
+2025-11-19 15:38:03.703 +02:00 [INF] Handled request: LoginUserQuery with response: {"Token":"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1laWRlbnRpZmllciI6IjlhYmUxZDIwLTlkOWEtNDFiZC04ZjQ2LWQyNzA5NTAyODQyNiIsImh0dHA6Ly9zY2hlbWFzLnhtbHNvYXAub3JnL3dzLzIwMDUvMDUvaWRlbnRpdHkvY2xhaW1zL25hbWUiOiJzdXBlcmFkbWluIiwiaHR0cDovL3NjaGVtYXMubWljcm9zb2Z0LmNvbS93cy8yMDA4LzA2L2lkZW50aXR5L2NsYWltcy9yb2xlIjoiU3VwZXJBZG1pbiIsImV4cCI6MTc2NDE2NDI4MywiaXNzIjoiVGFza0Zsb3dBUEkiLCJhdWQiOiJUYXNrRmxvd0NsaWVudCJ9.T_KtPnOcZrIe9gMRX8UVsO3x2uIU2YLZrvL9JqznrNs","Role":"SuperAdmin","Username":"superadmin","$type":"LoginResponseDto"}
+2025-11-19 15:38:30.096 +02:00 [INF] Handling request: CreateTaskCommand with data: {"Task":{"Title":"testtask","Description":"testtetetetetetetetetyuwdegwdgwqgfuoiewuygf","ProjectId":"f8bfea58-c592-44d7-69d3-08de276dca5b","DueDate":"2025-11-19T13:14:21.2560000Z","AssignedUsers":[{"Id":"4c727141-c47f-4918-f07f-08de1ad9d829","$type":"AssignedUserDto"},{"Id":"d69c7f7a-4d74-4590-4146-08de1b99d400","$type":"AssignedUserDto"},{"Id":"f64280bf-02be-45a8-ba6d-da4befc185e7","$type":"AssignedUserDto"}],"$type":"CreateTaskDto"},"$type":"CreateTaskCommand"}
+2025-11-19 15:38:30.441 +02:00 [WRN] You do not have a valid license key for the Lucky Penny software AutoMapper. This is allowed for development and testing scenarios. If you are running in production you are required to have a licensed version. Please visit https://luckypennysoftware.com to obtain a valid license.
+2025-11-19 15:38:31.015 +02:00 [INF] Handled request: CreateTaskCommand with response: {"Id":"e136f091-6bfe-4356-3e36-08de2770ed59","Title":"testtask","Description":"testtetetetetetetetetyuwdegwdgwqgfuoiewuygf","Status":"Created","CreatedAt":"2025-11-19T13:38:30.4564404Z","DueDate":"2025-11-19T13:14:21.2560000Z","ProjectId":"f8bfea58-c592-44d7-69d3-08de276dca5b","AssignedUserIds":[],"$type":"TaskDto"}
+2025-11-19 15:38:45.540 +02:00 [INF] Handling request: GetAllTasksQuery with data: {"$type":"GetAllTasksQuery"}
+2025-11-19 15:38:46.012 +02:00 [INF] Handled request: GetAllTasksQuery with response: [{"Id":"97d38900-582b-4e92-9d88-08de1b969ef6","Title":"string","Description":"string","Status":"WaitingToRun","CreatedAt":"2025-11-04T11:38:05.9124643","DueDate":"2025-11-04T11:52:04.3470000","ProjectId":"0adf578f-c2f1-4ec2-0669-08de1b966085","AssignedUserIds":[],"$type":"TaskDto"}]
+2025-11-19 15:39:25.486 +02:00 [INF] Handling request: GetTaskByIdQuery with data: {"TaskId":"e136f091-6bfe-4356-3e36-08de2770ed59","$type":"GetTaskByIdQuery"}
+2025-11-19 15:39:25.709 +02:00 [INF] Handled request: GetTaskByIdQuery with response: {"Id":"e136f091-6bfe-4356-3e36-08de2770ed59","Title":"testtask","Description":"testtetetetetetetetetyuwdegwdgwqgfuoiewuygf","Status":"Created","CreatedAt":"2025-11-19T13:38:30.4564404","DueDate":"2025-11-19T13:14:21.2560000","ProjectId":"f8bfea58-c592-44d7-69d3-08de276dca5b","AssignedUserIds":[],"$type":"TaskDto"}
+2025-11-19 15:40:45.240 +02:00 [INF] Handling request: GetAllTasksQuery with data: {"$type":"GetAllTasksQuery"}
+2025-11-19 15:40:45.272 +02:00 [INF] Handled request: GetAllTasksQuery with response: [{"Id":"97d38900-582b-4e92-9d88-08de1b969ef6","Title":"string","Description":"string","Status":"WaitingToRun","CreatedAt":"2025-11-04T11:38:05.9124643","DueDate":"2025-11-04T11:52:04.3470000","ProjectId":"0adf578f-c2f1-4ec2-0669-08de1b966085","AssignedUserIds":[],"$type":"TaskDto"}]
+2025-11-19 15:40:45.739 +02:00 [INF] Handling request: GetAllTasksQuery with data: {"$type":"GetAllTasksQuery"}
+2025-11-19 15:40:45.760 +02:00 [INF] Handled request: GetAllTasksQuery with response: [{"Id":"97d38900-582b-4e92-9d88-08de1b969ef6","Title":"string","Description":"string","Status":"WaitingToRun","CreatedAt":"2025-11-04T11:38:05.9124643","DueDate":"2025-11-04T11:52:04.3470000","ProjectId":"0adf578f-c2f1-4ec2-0669-08de1b966085","AssignedUserIds":[],"$type":"TaskDto"}]
+2025-11-19 15:40:45.908 +02:00 [INF] Handling request: GetAllTasksQuery with data: {"$type":"GetAllTasksQuery"}
+2025-11-19 15:40:45.916 +02:00 [INF] Handled request: GetAllTasksQuery with response: [{"Id":"97d38900-582b-4e92-9d88-08de1b969ef6","Title":"string","Description":"string","Status":"WaitingToRun","CreatedAt":"2025-11-04T11:38:05.9124643","DueDate":"2025-11-04T11:52:04.3470000","ProjectId":"0adf578f-c2f1-4ec2-0669-08de1b966085","AssignedUserIds":[],"$type":"TaskDto"}]
+2025-11-19 15:40:46.064 +02:00 [INF] Handling request: GetAllTasksQuery with data: {"$type":"GetAllTasksQuery"}
+2025-11-19 15:40:46.075 +02:00 [INF] Handled request: GetAllTasksQuery with response: [{"Id":"97d38900-582b-4e92-9d88-08de1b969ef6","Title":"string","Description":"string","Status":"WaitingToRun","CreatedAt":"2025-11-04T11:38:05.9124643","DueDate":"2025-11-04T11:52:04.3470000","ProjectId":"0adf578f-c2f1-4ec2-0669-08de1b966085","AssignedUserIds":[],"$type":"TaskDto"}]

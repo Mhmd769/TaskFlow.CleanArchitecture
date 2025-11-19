@@ -1,8 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using TaskStatus = TaskFlow.Domain.Enums.TaskStatus;
 
 namespace TaskFlow.Domain.Entities
@@ -20,7 +17,16 @@ namespace TaskFlow.Domain.Entities
         public Guid ProjectId { get; set; }
         public Project Project { get; set; } = null!;
 
-        public Guid? AssignedUserId { get; set; }
-        public User? AssignedUser { get; set; }
+        // Many-to-many: Task can have multiple assigned users
+        public ICollection<TaskAssignedUser> AssignedUsers { get; set; } = new List<TaskAssignedUser>();
+    }
+
+    public class TaskAssignedUser
+    {
+        public Guid TaskId { get; set; }
+        public TaskItem Task { get; set; } = null!;
+
+        public Guid UserId { get; set; }
+        public User User { get; set; } = null!;
     }
 }

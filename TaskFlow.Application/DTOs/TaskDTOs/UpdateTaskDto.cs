@@ -12,7 +12,7 @@ namespace TaskFlow.Application.DTOs.TaskDTOs
         public string Title { get; set; } = null!;
         public string? Description { get; set; }
         public TaskStatus Status { get; set; }
-        public Guid? AssignedUserId { get; set; }
+        public List<Guid> AssignedUserIds { get; set; } = new List<Guid>();
         public DateTime? DueDate { get; set; }
     }
 }

@@ -10,7 +10,8 @@ public class TaskMappingProfile : Profile
         CreateMap<TaskItem, TaskDto>().ReverseMap();
 
         // DTO → Entity (Create)
-        CreateMap<CreateTaskDto, TaskItem>();
+        CreateMap<CreateTaskDto, TaskItem>()
+            .ForMember(dest => dest.AssignedUsers, opt => opt.Ignore());
 
         // DTO → Entity (Update)
         CreateMap<UpdateTaskDto, TaskItem>();

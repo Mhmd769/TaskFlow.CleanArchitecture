@@ -16,6 +16,6 @@ namespace TaskFlow.Application.DTOs.TaskDTOs
         public DateTime? DueDate { get; set; }
 
         public Guid ProjectId { get; set; }
-        public Guid? AssignedUserId { get; set; }
+        public List<Guid> AssignedUserIds { get; set; } = new List<Guid>();
     }
 }

@@ -1,4 +1,6 @@
-﻿using TaskFlow.Domain.Exceptions;
+﻿using System.Linq;
+using FluentValidation;
+using TaskFlow.Domain.Exceptions;
 
 namespace TaskFlow.API.Middlewares
 {
@@ -37,6 +39,23 @@ namespace TaskFlow.API.Middlewares
                 {
                     status = "error",
                     message = ex.Message
+                });
+            }
+            catch (ValidationException ex)
+            {
+                _logger.LogWarning(ex, "Validation failed for request {Path}", context.Request.Path);
+
+                context.Response.ContentType = "application/json";
+                context.Response.StatusCode = StatusCodes.Status400BadRequest;
+
+                var errors = ex.Errors
+                    .Select(error => new { field = error.PropertyName, error = error.ErrorMessage })
+                    .ToList();
+
+                await context.Response.WriteAsJsonAsync(new
+                {
+                    status = "validation_error",
+                    errors
                 });
             }
             catch (Exception ex)

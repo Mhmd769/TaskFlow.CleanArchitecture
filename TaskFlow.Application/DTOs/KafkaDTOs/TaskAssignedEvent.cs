@@ -12,6 +12,7 @@ namespace TaskFlow.Application.DTOs.KafkaDTOs
         public Guid TaskId { get; set; }
         public string TaskTitle { get; set; }
         public Guid ProjectId { get; set; }
+        public DateTime? DueDate { get; set; }
         public List<UserDto> AssignedUsers { get; set; } = new List<UserDto>();
     }
 }

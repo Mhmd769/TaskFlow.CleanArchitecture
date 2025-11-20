@@ -1,24 +1,25 @@
-﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.IdentityModel.Tokens;
-using System.Text;
-using MediatR;
-using FluentValidation;
+﻿using FluentValidation;
 using FluentValidation.AspNetCore;
+using MediatR;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
+using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi.Models;
+using Serilog;
+using Serilog.Events;
+using System.Text;
+using TaskFlow.API.Middlewares;
 using TaskFlow.Application.Behaviors;
+using TaskFlow.Application.Common;
 using TaskFlow.Application.Mappings;
 using TaskFlow.Domain.Interfaces;
+using TaskFlow.Infrastructure.Messaging;
 using TaskFlow.Infrastructure.Persistence;
-using TaskFlow.Infrastructure.Services;
 using TaskFlow.Infrastructure.Repositories;
 using TaskFlow.Infrastructure.security;
 using TaskFlow.Infrastructure.Seed;
-using Microsoft.OpenApi.Models;
-using Serilog.Events;
-using Serilog;
-using TaskFlow.API.Middlewares;
-using Microsoft.Extensions.Configuration;
-using TaskFlow.Application.Common;
+using TaskFlow.Infrastructure.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -119,6 +120,9 @@ builder.Services.Configure<JwtSettings>(
 builder.Services.AddScoped<IJwtService, JwtService>();
 builder.Services.AddScoped<IAuthRepository, AuthRepository>();
 builder.Services.AddScoped<IPasswordHasher, PasswordHasher>();
+
+builder.Services.AddScoped<ITaskEventProducer, TaskEventProducer>();
+
 
 var jwtSettings = builder.Configuration.GetSection("Jwt").Get<JwtSettings>();
 var key = Encoding.UTF8.GetBytes(jwtSettings.Key);

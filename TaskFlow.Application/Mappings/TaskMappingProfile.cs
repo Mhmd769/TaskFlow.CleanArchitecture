@@ -7,7 +7,9 @@ public class TaskMappingProfile : Profile
     public TaskMappingProfile()
     {
         // Entity → DTO
-        CreateMap<TaskItem, TaskDto>().ReverseMap();
+        CreateMap<TaskItem, TaskDto>()
+                .ForMember(dest => dest.AssignedUserIds,
+               opt => opt.MapFrom(src => src.AssignedUsers.Select(u => u.UserId))).ReverseMap();
 
         // DTO → Entity (Create)
         CreateMap<CreateTaskDto, TaskItem>()

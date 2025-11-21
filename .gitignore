@@ -22,10 +22,11 @@ project.lock.json
 docker-compose.override.yml
 
 # Sensitive configuration files
-appsettings.json
+*/appsettings.json
 appsettings.Development.json
 appsettings.Local.json
 appsettings.*.json
+
 
 # Entity Framework Migrations (handled locally per dev)
 **/Migrations/

@@ -163,6 +163,15 @@ builder.Host.UseSerilog();
 builder.Services.AddTransient(typeof(IPipelineBehavior<,>), typeof(LoggingBehavior<,>));
 
 
+builder.Services.AddCors(options =>
+{
+    options.AddDefaultPolicy(policy =>
+        policy.WithOrigins("http://localhost:5173")
+              .AllowAnyHeader()
+              .AllowAnyMethod());
+});
+
+
 // =======================================
 // 🔹 Build App
 // =======================================
@@ -184,6 +193,8 @@ app.UseHttpsRedirection();
 // ✅ Important Order
 app.UseAuthentication();
 app.UseAuthorization();
+
+app.UseCors();
 
 app.MapControllers();
 

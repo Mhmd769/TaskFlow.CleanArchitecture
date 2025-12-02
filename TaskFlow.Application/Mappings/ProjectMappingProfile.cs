@@ -10,7 +10,7 @@ namespace TaskFlow.Application.Mappings
         {
             // Entity -> DTO
             CreateMap<Project, ProjectDto>()
-                .ForMember(dest => dest.OwnerName, opt => opt.MapFrom(src => src.Owner.FullName))
+                .ForMember(dest => dest.Owner, opt => opt.MapFrom(src => src.Owner))
                 .ForMember(dest => dest.TaskCount, opt => opt.MapFrom(src => src.Tasks.Count))
                 .ReverseMap();
 

@@ -39,7 +39,7 @@ namespace TaskFlow.Application.Features.Projects.Queries.GetPrpjectById
 
             // ✅ Map and compute custom fields
             var dto = _mapper.Map<ProjectDto>(project);
-            dto.OwnerName = project.Owner?.FullName;
+            dto.Owner.Email = project.Owner.Email;
             dto.TaskCount = project.Tasks?.Count ?? 0;
 
             // 3️⃣ Store in Redis for 5 minutes

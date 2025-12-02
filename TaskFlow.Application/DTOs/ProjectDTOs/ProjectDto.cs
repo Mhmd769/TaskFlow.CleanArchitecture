@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using TaskFlow.Application.DTOs.UserDTOs;
 
 namespace TaskFlow.Application.DTOs.ProjectDTOs
 {
@@ -14,7 +15,7 @@ namespace TaskFlow.Application.DTOs.ProjectDTOs
         public DateTime CreatedAt { get; set; }
 
         // Display-only fields
-        public string? OwnerName { get; set; }
+        public UserDto Owner { get; set; }
         public int TaskCount { get; set; }
     }
 }

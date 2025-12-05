@@ -1,7 +1,6 @@
 ﻿using AutoMapper;
 using MediatR;
-using System;
-using System.Collections.Generic;
+using Microsoft.EntityFrameworkCore;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -17,7 +16,7 @@ namespace TaskFlow.Application.Features.Tasks.Command.CreateTask
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
-        private readonly ITaskEventProducer _eventProducer; // <-- Kafka Producer
+        private readonly ITaskEventProducer _eventProducer;
 
         public CreateTaskHandler(
             IUnitOfWork unitOfWork,
@@ -31,59 +30,57 @@ namespace TaskFlow.Application.Features.Tasks.Command.CreateTask
 
         public async Task<TaskDto> Handle(CreateTaskCommand request, CancellationToken cancellationToken)
         {
-            // Map Task data
-            var task = _mapper.Map<TaskItem>(request.Task);
+            var dto = request.Task;
 
-            // Assign Users
-            task.AssignedUsers = request.Task.AssignedUsers?
-                .Select(x => new TaskAssignedUser { UserId = x.Id })
-                .ToList() ?? new List<TaskAssignedUser>();
+            // 1️⃣ Create Task entity
+            var task = new TaskItem
+            {
+                Title = dto.Title,
+                Description = dto.Description,
+                Status = dto.Status,
+                ProjectId = dto.ProjectId,
+                DueDate = dto.DueDate
+            };
 
-            // Save Task
+            // 2️⃣ Assign users
+            task.AssignedUsers = dto.AssignedUserIds
+                .Select(id => new TaskAssignedUser { UserId = id })
+                .ToList();
+
+            // 3️⃣ Save task
             await _unitOfWork.Tasks.AddAsync(task);
             await _unitOfWork.SaveAsync();
 
-            // --------------------------
-            // FETCH FULL USER DATA
-            // --------------------------
-            var assignedUsers = new List<UserDto>();
+            // 4️⃣ Load full task with Project and Users
+            var fullTask = await _unitOfWork.Tasks.GetAll()
+                .Include(t => t.Project)
+                .Include(t => t.AssignedUsers)
+                    .ThenInclude(au => au.User)
+                .FirstOrDefaultAsync(t => t.Id == task.Id, cancellationToken);
 
-            foreach (var au in task.AssignedUsers)
-            {
-                var user = await _unitOfWork.Users.GetByIdAsync(au.UserId);
+            if (fullTask == null)
+                throw new System.Exception("Task creation failed");
 
-                if (user != null)
+            // 5️⃣ Publish Kafka event
+            var assignedUsers = fullTask.AssignedUsers
+                .Select(u => new UserDto
                 {
-                    assignedUsers.Add(new UserDto
-                    {
-                        Id = user.Id,
-                        Username = user.Username,
-                        FullName = user.FullName,
-                        Email = user.Email,
-                        PhoneNumber = user.PhoneNumber,
-                    });
-                }
-            }
+                    Id = u.UserId,
+                    FullName = u.User.FullName,
+                    Email = u.User.Email
+                }).ToList();
 
-            // --------------------------
-            // BUILD KAFKA EVENT
-            // --------------------------
-            var taskAssignedEvent = new TaskAssignedEvent
+            await _eventProducer.PublishTaskAssignedAsync(new TaskAssignedEvent
             {
-                TaskId = task.Id,
-                TaskTitle = task.Title,
-                ProjectId = task.ProjectId,
-                DueDate = task.DueDate,
+                TaskId = fullTask.Id,
+                TaskTitle = fullTask.Title,
+                ProjectId = fullTask.ProjectId,
+                DueDate = fullTask.DueDate,
                 AssignedUsers = assignedUsers
-            };
+            });
 
-            // --------------------------
-            // PUBLISH TO KAFKA
-            // --------------------------
-            await _eventProducer.PublishTaskAssignedAsync(taskAssignedEvent);
-
-            // Map to DTO for response
-            return _mapper.Map<TaskDto>(task);
+            // 6️⃣ Return DTO for frontend
+            return _mapper.Map<TaskDto>(fullTask);
         }
     }
 }

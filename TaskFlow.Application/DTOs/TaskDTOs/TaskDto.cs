@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using TaskStatus = TaskFlow.Domain.Enums.TaskStatus;
+
 
 namespace TaskFlow.Application.DTOs.TaskDTOs
 {
@@ -16,6 +18,11 @@ namespace TaskFlow.Application.DTOs.TaskDTOs
         public DateTime? DueDate { get; set; }
 
         public Guid ProjectId { get; set; }
-        public List<Guid> AssignedUserIds { get; set; } = new List<Guid>();
+        public string ProjectName { get; set; } = null!;
+
+        // Many-to-many result:
+        public List<Guid> AssignedUserIds { get; set; } = new();
+        public List<string> AssignedUserNames { get; set; } = new();
     }
+
 }

@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using TaskFlow.Application.Common;
 using TaskFlow.Application.DTOs.TaskDTOs;
@@ -17,34 +17,53 @@ namespace TaskFlow.Application.Features.Tasks.Queries.GetAllTasks
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
-        private readonly ICacheService _cache; 
-        public GetAllTaskHandler(IUnitOfWork unitOfWork, IMapper mapper , ICacheService cache)
+        private readonly ICacheService _cache;
+
+        public GetAllTaskHandler(IUnitOfWork unitOfWork, IMapper mapper, ICacheService cache)
         {
             _unitOfWork = unitOfWork;
             _mapper = mapper;
             _cache = cache;
         }
+
         public async Task<List<TaskDto>> Handle(GetAllTasksQuery request, CancellationToken cancellationToken)
         {
             var cacheKey = "tasks:all";
 
+            // 1️⃣ Check cache
             var cachedTasks = await _cache.GetAsync<List<TaskDto>>(cacheKey);
             if (cachedTasks != null)
-            {
                 return cachedTasks;
-            }
 
-            var tasks= _unitOfWork.Tasks.GetAll();
-            if (tasks == null)
+            // 2️⃣ Load tasks with Project and AssignedUsers -> User
+            var tasks = await _unitOfWork.Tasks.GetAll()
+                .Include(t => t.Project)
+                .Include(t => t.AssignedUsers)
+                    .ThenInclude(au => au.User)
+                .ToListAsync(cancellationToken);
+
+            if (!tasks.Any())
+                throw new AppException("No tasks found");
+
+            // 3️⃣ Map manually to ensure ProjectName and AssignedUserNames
+            var taskDtos = tasks.Select(t => new TaskDto
             {
-                throw new AppException("No Tasks Founded");
-            }
+                Id = t.Id,
+                Title = t.Title,
+                Description = t.Description,
+                Status = t.Status,
+                CreatedAt = t.CreatedAt,
+                DueDate = t.DueDate,
+                ProjectId = t.ProjectId,
+                ProjectName = t.Project?.Name ?? "N/A",
+                AssignedUserIds = t.AssignedUsers.Select(au => au.UserId).ToList(),
+                AssignedUserNames = t.AssignedUsers.Select(au => au.User.FullName).ToList()
+            }).ToList();
 
-            var taskdto = await _mapper.ProjectTo<TaskDto>(tasks).ToListAsync(cancellationToken);
+            // 4️⃣ Cache the result
+            await _cache.SetAsync(cacheKey, taskDtos, TimeSpan.FromMinutes(10));
 
-            await _cache.SetAsync(cacheKey, taskdto, TimeSpan.FromMinutes(10));
-
-            return taskdto;
+            return taskDtos;
         }
     }
 }

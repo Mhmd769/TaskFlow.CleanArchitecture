@@ -19,7 +19,7 @@ namespace TaskFlow.Domain.Entities
 
         // Many-to-many: Task can have multiple assigned users
         public ICollection<TaskAssignedUser> AssignedUsers { get; set; } = new List<TaskAssignedUser>();
-    }
+    }   
 
     public class TaskAssignedUser
     {

@@ -26,6 +26,7 @@ public class GetByIdProjectHandlerTests
         var mockCache = new Mock<ICacheService>();
 
         var projectId = Guid.NewGuid();
+        var owner = new User { Id = Guid.NewGuid(), FullName = "Owner Name" };
 
         var cachedProject = new ProjectDto
         {
@@ -33,7 +34,11 @@ public class GetByIdProjectHandlerTests
             Name = "Cached Project",
             Description = "From Cache",
             TaskCount = 0,
-            OwnerName = "Owner X"
+            Owner = owner != null ? new TaskFlow.Application.DTOs.UserDTOs.UserDto
+            {
+                Id = owner.Id,
+                FullName = owner.FullName
+            } : null
         };
 
         mockCache.Setup(c => c.GetAsync<ProjectDto>($"project:{projectId}"))
@@ -88,7 +93,11 @@ public class GetByIdProjectHandlerTests
                       Id = project.Id,
                       Name = project.Name,
                       Description = project.Description,
-                      OwnerName = project.Owner.FullName,
+                      Owner= project.Owner != null ? new TaskFlow.Application.DTOs.UserDTOs.UserDto
+                      {
+                          Id = project.Owner.Id,
+                          FullName = project.Owner.FullName
+                      } : null,
                       TaskCount = project.Tasks.Count
                   });
 

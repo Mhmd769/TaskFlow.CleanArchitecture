@@ -9,6 +9,7 @@ using TaskFlow.Application.Features.Projects.Command.DeleteProjects;
 using TaskFlow.Application.Features.Projects.Command.UpdateProjects;
 using TaskFlow.Application.Features.Projects.Queries.GetAllProjects;
 using TaskFlow.Application.Features.Projects.Queries.GetPrpjectById;
+using TaskFlow.Application.Features.Tasks.Command.ChangeStatus;
 using TaskFlow.Application.Features.Tasks.Command.CreateTask;
 using TaskFlow.Application.Features.Tasks.Command.DeleteTask;
 using TaskFlow.Application.Features.Tasks.Command.UpdateTask;
@@ -64,5 +65,13 @@ namespace TaskFlow.API.Controllers
             var task = await _mediator.Send(new DeleteTaskCommand { TaskId = Id });
             return Ok(task);
         }
+
+        [HttpPost("{taskId}/status")]
+        public async Task<IActionResult> ChangeStatus(Guid taskId, [FromBody] int newStatus)
+        {
+            var taskDto = await _mediator.Send(new ChangeStatusCommand(taskId, newStatus));
+            return Ok(taskDto);
+        }
+
     }
 }

@@ -14,6 +14,9 @@ namespace TaskFlow.Domain.Interfaces
         IRepository<TaskItem> Tasks { get; }
         IRepository<Comment> Comments { get; }
 
+        IProjectRepository ProjectsWithDetails { get; }
+
+
         Task<int> SaveAsync();
     }
 }

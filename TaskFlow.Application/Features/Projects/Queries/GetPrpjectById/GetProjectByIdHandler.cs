@@ -28,7 +28,6 @@ namespace TaskFlow.Application.Features.Projects.Queries.GetProjectById
             if (cached != null)
                 return cached;
 
-            // Use the fixed property and request.ProjectId
             var project = await _unitOfWork.ProjectsWithDetails.GetProjectWithDetailsByIdAsync(request.ProjectId);
 
             if (project == null)
@@ -36,7 +35,6 @@ namespace TaskFlow.Application.Features.Projects.Queries.GetProjectById
 
             var dto = _mapper.Map<ProjectDto>(project);
             dto.TaskCount = project.Tasks?.Count ?? 0;
-          
 
             await _cache.SetAsync(cacheKey, dto, TimeSpan.FromMinutes(5));
 

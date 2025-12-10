@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using MediatR;
+using TaskFlow.Application.Common;
 using TaskFlow.Application.DTOs.UserDTOs;
 using TaskFlow.Domain.Entities;
 using TaskFlow.Domain.Exceptions;
@@ -11,11 +12,13 @@ namespace TaskFlow.Application.Features.Users.Command.CreateUser
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
+        private readonly ICacheService _cache;
 
-        public CreateUserHandler(IUnitOfWork unitOfWork, IMapper mapper)
+        public CreateUserHandler(IUnitOfWork unitOfWork, IMapper mapper, ICacheService cache)
         {
             _unitOfWork = unitOfWork;
             _mapper = mapper;
+            _cache = cache;
         }
 
         public async Task<UserDto> Handle(CreateUserCommand request, CancellationToken cancellationToken)
@@ -31,6 +34,11 @@ namespace TaskFlow.Application.Features.Users.Command.CreateUser
 
             // Map from Entity → DTO
             var result = _mapper.Map<UserDto>(user);
+
+            // Bust list cache and prime single-user cache to avoid stale responses
+            await _cache.RemoveAsync("users:all");
+            await _cache.SetAsync($"user:{result.Id}", result, TimeSpan.FromMinutes(5));
+
             return result;
         }
     }

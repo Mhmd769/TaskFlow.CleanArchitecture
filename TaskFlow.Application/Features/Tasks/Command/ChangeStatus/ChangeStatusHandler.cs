@@ -1,6 +1,7 @@
-﻿using AutoMapper;
+using AutoMapper;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
+using TaskFlow.Application.Common;
 using TaskFlow.Application.DTOs.TaskDTOs;
 using TaskFlow.Domain.Exceptions;
 using TaskFlow.Domain.Interfaces;
@@ -11,11 +12,13 @@ namespace TaskFlow.Application.Features.Tasks.Command.ChangeStatus
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
+        private readonly ICacheService _cache;
 
-        public ChangeStatusHandler(IUnitOfWork unitOfWork, IMapper mapper)
+        public ChangeStatusHandler(IUnitOfWork unitOfWork, IMapper mapper, ICacheService cache)
         {
             _unitOfWork = unitOfWork;
             _mapper = mapper;
+            _cache = cache;
         }
 
         public async Task<TaskDto> Handle(ChangeStatusCommand request, CancellationToken cancellationToken)
@@ -36,7 +39,14 @@ namespace TaskFlow.Application.Features.Tasks.Command.ChangeStatus
                     .ThenInclude(au => au.User)
                 .FirstOrDefaultAsync(cancellationToken);
 
-            return _mapper.Map<TaskDto>(updatedTask);
+            var dto = _mapper.Map<TaskDto>(updatedTask);
+
+            // Invalidate caches so consumers see the new status
+            await _cache.RemoveAsync($"task:{request.TaskId}");
+            await _cache.RemoveAsync("tasks:all");
+            await _cache.SetAsync($"task:{request.TaskId}", dto, TimeSpan.FromMinutes(10));
+
+            return dto;
         }
     }
 }

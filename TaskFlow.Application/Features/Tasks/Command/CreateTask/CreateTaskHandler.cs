@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using TaskFlow.Application.Common;
 using TaskFlow.Application.DTOs.KafkaDTOs;
 using TaskFlow.Application.DTOs.TaskDTOs;
 using TaskFlow.Application.DTOs.UserDTOs;
@@ -17,15 +18,18 @@ namespace TaskFlow.Application.Features.Tasks.Command.CreateTask
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
         private readonly ITaskEventProducer _eventProducer;
+        private readonly ICacheService _cache;
 
         public CreateTaskHandler(
             IUnitOfWork unitOfWork,
             IMapper mapper,
-            ITaskEventProducer eventProducer)
+            ITaskEventProducer eventProducer,
+            ICacheService cache)
         {
             _unitOfWork = unitOfWork;
             _mapper = mapper;
             _eventProducer = eventProducer;
+            _cache = cache;
         }
 
         public async Task<TaskDto> Handle(CreateTaskCommand request, CancellationToken cancellationToken)
@@ -79,8 +83,14 @@ namespace TaskFlow.Application.Features.Tasks.Command.CreateTask
                 AssignedUsers = assignedUsers
             });
 
+            var resultDto = _mapper.Map<TaskDto>(fullTask);
+
+            // Invalidate list cache and prime item cache with fresh data
+            await _cache.RemoveAsync("tasks:all");
+            await _cache.SetAsync($"task:{fullTask.Id}", resultDto, TimeSpan.FromMinutes(10));
+
             // 6️⃣ Return DTO for frontend
-            return _mapper.Map<TaskDto>(fullTask);
+            return resultDto;
         }
     }
 }

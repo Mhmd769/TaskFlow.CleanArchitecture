@@ -44,9 +44,11 @@ namespace TaskFlow.Application.Features.Projects.Command.UpdateProjects
             // ❗Invalidate cache
             string cacheById = $"project:{request.Project.Id}";
             string cacheAll = "projects:all";
+            string taskcache = "tasks:all";
 
             await _cache.RemoveAsync(cacheById);
             await _cache.RemoveAsync(cacheAll);
+            await _cache.RemoveAsync(taskcache);
 
             // 5️⃣ Return updated Project as DTO
             return _mapper.Map<ProjectDto>(project);

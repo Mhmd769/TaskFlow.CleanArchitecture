@@ -61,6 +61,7 @@ namespace TaskFlow.Application.Features.Tasks.Queries.GetAllTasks
             }).ToList();
 
             // 4️⃣ Cache the result
+            //await _cache.RemoveAsync(cacheKey);
             await _cache.SetAsync(cacheKey, taskDtos, TimeSpan.FromMinutes(10));
 
             return taskDtos;

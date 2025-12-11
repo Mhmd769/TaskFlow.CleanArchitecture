@@ -36,9 +36,12 @@ namespace TaskFlow.Application.Features.Projects.Command.DeleteProjects
             // ❗Invalidate cache
             string cacheById = $"project:{request.ProjectId}";
             string cacheAll = "projects:all";
+            string taskcache = "tasks:all";
 
             await _cache.RemoveAsync(cacheById);
             await _cache.RemoveAsync(cacheAll);
+            await _cache.RemoveAsync(taskcache);
+    
 
             // 3️⃣ Return deleted project as DTO
             return _mapper.Map<ProjectDto>(project);

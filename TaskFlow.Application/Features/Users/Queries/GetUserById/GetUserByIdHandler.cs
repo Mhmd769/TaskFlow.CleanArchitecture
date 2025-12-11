@@ -27,21 +27,23 @@ namespace TaskFlow.Application.Features.Users.Queries.GetUserById
         {
             string cacheKey = $"user:{request.UserId}";
 
+            // 1️⃣ Try cache
             var cachedUser = await _cache.GetAsync<UserDto>(cacheKey);
-            
-            if(cachedUser != null)
+            if (cachedUser != null)
                 return cachedUser;
 
-
+            // 2️⃣ Load from DB
             var user = await _unitOfWork.Users.GetByIdAsync(request.UserId);
             if (user == null)
                 throw new NotFoundException("User", request.UserId);
 
-            var  userDtos = _mapper.Map<UserDto>(user);
-            await _cache.SetAsync(cacheKey, userDtos, TimeSpan.FromMinutes(5));
+            var dto = _mapper.Map<UserDto>(user);
 
+            // 3️⃣ Save to cache
+            await _cache.SetAsync(cacheKey, dto, TimeSpan.FromMinutes(5));
 
-            return userDtos;
+            return dto;
         }
+
     }
 }

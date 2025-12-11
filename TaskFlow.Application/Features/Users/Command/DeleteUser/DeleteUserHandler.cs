@@ -33,12 +33,17 @@ namespace TaskFlow.Application.Features.Users.Command.DeleteUser
             _unitOfWork.Users.Delete(user);
             await _unitOfWork.SaveAsync();
 
-            // ❗Invalidate cache
+            // Cache keys
             string cacheById = $"user:{request.userid}";
             string cacheAll = "users:all";
+            string projectsCache = "projects:all"; // ✅ Add this
+            string taskcache = "tasks:all";
 
+            // Remove old caches
             await _cache.RemoveAsync(cacheById);
             await _cache.RemoveAsync(cacheAll);
+            await _cache.RemoveAsync(projectsCache); // ✅ Invalidate projects cache
+            await _cache.RemoveAsync(taskcache);
 
             return userDto;
         }

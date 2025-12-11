@@ -28,25 +28,24 @@ namespace TaskFlow.Application.Features.Users.Queries.GetAllUsers
         {
             string cacheKey = "users:all";
 
-            // 1️⃣ Try to read from Redis
+            // 1️⃣ Try cache
             var cachedUsers = await _cache.GetAsync<List<UserDto>>(cacheKey);
             if (cachedUsers != null)
                 return cachedUsers;
 
-            // 2️⃣ Query DB from Repository
+            // 2️⃣ Load from DB
             var usersQuery = _unitOfWork.Users.GetAll();
 
             var userDtos = await _mapper
                 .ProjectTo<UserDto>(usersQuery)
                 .ToListAsync(cancellationToken);
 
-            if (!userDtos.Any())
-                throw new ApplicationException("No users found.");
-
-            // 3️⃣ Store in Redis for 5 minutes
+            // ❗ Do NOT throw if empty — that's valid
+            // Cache even if empty list
             await _cache.SetAsync(cacheKey, userDtos, TimeSpan.FromMinutes(5));
 
             return userDtos;
         }
+
     }
 }

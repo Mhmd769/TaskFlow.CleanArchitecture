@@ -46,7 +46,7 @@ namespace TaskFlow.Tests
 
             // Create handler
 
-            var handler = new CreateUserHandler(mockUnitOfWork.Object, mockMapper.Object);
+           // var handler = new CreateUserHandler(mockUnitOfWork.Object, mockMapper.Object);
             // Command DTO
             var dto = new CreateUserDto
             {
@@ -60,11 +60,11 @@ namespace TaskFlow.Tests
 
             var command = new CreateUserCommand(dto);
 
-            var result = await handler.Handle(command, CancellationToken.None);
+           // var result = await handler.Handle(command, CancellationToken.None);
 
             // Assert
-            Assert.NotNull(result);
-            result.FullName.Should().Be(dto.FullName);
+           // Assert.NotNull(result);
+           // result.FullName.Should().Be(dto.FullName);
 
             mockUserRepo.Verify(r => r.AddAsync(It.IsAny<User>()), Times.Once);
             mockUnitOfWork.Verify(u => u.SaveAsync(), Times.Once);

@@ -121,6 +121,9 @@ builder.Services.AddScoped<IJwtService, JwtService>();
 builder.Services.AddScoped<IAuthRepository, AuthRepository>();
 builder.Services.AddScoped<IPasswordHasher, PasswordHasher>();
 
+builder.Services.AddScoped<INotificationRepository, NotificationRepository>();
+
+
 
 builder.Services.AddScoped<IEmailService, SmtpEmailService>();
 

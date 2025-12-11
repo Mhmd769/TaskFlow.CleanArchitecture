@@ -17,12 +17,17 @@ namespace TaskFlow.Application.Features.Tasks.Command.UpdateTask
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
         private readonly ICacheService _cache;
+        private readonly INotificationRepository _repo;
 
-        public UpdateTaskHandler(IUnitOfWork unitOfWork, IMapper mapper, ICacheService cache)
+
+        public UpdateTaskHandler(IUnitOfWork unitOfWork, IMapper mapper, ICacheService cache, INotificationRepository repo)
         {
             _unitOfWork = unitOfWork;
             _mapper = mapper;
             _cache = cache;
+            _repo = repo;
+
+
         }
 
         public async Task<TaskDto> Handle(UpdateTaskCommand request, CancellationToken cancellationToken)
@@ -57,6 +62,21 @@ namespace TaskFlow.Application.Features.Tasks.Command.UpdateTask
                     TaskId = task.Id, 
                     UserId = userId 
                 });
+            }
+
+            if (dto.AssignedUserIds != null && dto.AssignedUserIds.Any())
+            {
+                var notifications = dto.AssignedUserIds.Select(userId => new Notification
+                {
+                    UserId = userId.ToString(), // convert Guid to string
+                    Message = $"Project manager update the task you are assigned in check it.: {task.Title}",
+                    Link = $"/tasks/{task.Id}",
+                    IsRead = false,
+                    CreatedAt = System.DateTime.UtcNow
+                }).ToList();
+
+                await _repo.AddRangeAsync(notifications);
+                await _repo.SaveAsync();
             }
 
             // 4️⃣ Save changes (entity is already tracked, so Update() will work correctly)

@@ -17,19 +17,23 @@ namespace TaskFlow.Application.Features.Tasks.Command.CreateTask
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
-        private readonly ITaskEventProducer _eventProducer;
+        private readonly ITaskEventProducer _eventProducer; // optional, keep for Kafka
         private readonly ICacheService _cache;
+        private readonly INotificationRepository _repo;
+
 
         public CreateTaskHandler(
             IUnitOfWork unitOfWork,
             IMapper mapper,
             ITaskEventProducer eventProducer,
-            ICacheService cache)
+            ICacheService cache,
+            INotificationRepository repo)
         {
             _unitOfWork = unitOfWork;
             _mapper = mapper;
             _eventProducer = eventProducer;
             _cache = cache;
+            _repo = repo;
         }
 
         public async Task<TaskDto> Handle(CreateTaskCommand request, CancellationToken cancellationToken)
@@ -55,7 +59,24 @@ namespace TaskFlow.Application.Features.Tasks.Command.CreateTask
             await _unitOfWork.Tasks.AddAsync(task);
             await _unitOfWork.SaveAsync();
 
-            // 4️⃣ Load full task with Project and Users
+            if (dto.AssignedUserIds != null && dto.AssignedUserIds.Any())
+            {
+                var notifications = dto.AssignedUserIds.Select(userId => new Notification
+                {
+                    UserId = userId.ToString(), // convert Guid to string
+                    Message = $"You have been assigned to task: {task.Title}",
+                    Link = $"/tasks/{task.Id}",
+                    IsRead = false,
+                    CreatedAt = System.DateTime.UtcNow
+                }).ToList();
+
+                await _repo.AddRangeAsync(notifications);
+                await _repo.SaveAsync();
+            }
+
+
+
+            // 5️⃣ Load full task with Project and Users
             var fullTask = await _unitOfWork.Tasks.GetAll()
                 .Include(t => t.Project)
                 .Include(t => t.AssignedUsers)
@@ -65,7 +86,7 @@ namespace TaskFlow.Application.Features.Tasks.Command.CreateTask
             if (fullTask == null)
                 throw new System.Exception("Task creation failed");
 
-            // 5️⃣ Publish Kafka event
+            // 6️⃣ Publish Kafka event (optional)
             var assignedUsers = fullTask.AssignedUsers
                 .Select(u => new UserDto
                 {
@@ -85,11 +106,11 @@ namespace TaskFlow.Application.Features.Tasks.Command.CreateTask
 
             var resultDto = _mapper.Map<TaskDto>(fullTask);
 
-            // Invalidate list cache and prime item cache with fresh data
+            // 7️⃣ Invalidate cache
             await _cache.RemoveAsync("tasks:all");
             await _cache.SetAsync($"task:{fullTask.Id}", resultDto, TimeSpan.FromMinutes(10));
 
-            // 6️⃣ Return DTO for frontend
+            // 8️⃣ Return DTO for frontend
             return resultDto;
         }
     }

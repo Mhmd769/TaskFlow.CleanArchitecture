@@ -49,6 +49,12 @@ namespace TaskFlow.Infrastructure.Repositories
                 notif.IsRead = true;
         }
 
+        public async Task<Notification?> GetByIdAsync(Guid id)
+        {
+            return await _context.Notifications.FindAsync(id);
+        }
+
+
         public Task SaveAsync() => _context.SaveChangesAsync();
     }
 

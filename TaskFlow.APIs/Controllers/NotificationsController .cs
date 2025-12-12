@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
 using TaskFlow.Application.Features.Notifications.commad;
+using TaskFlow.Application.Features.Notifications.Command;
 using TaskFlow.Application.Features.Notifications.Queries.GetAllNotifications;
 using TaskFlow.Application.Features.Notifications.Queries.GetUnreadNotifications;
 using TaskFlow.Domain.Entities;
@@ -51,5 +52,14 @@ namespace TaskFlow.API.Controllers
             var notifications = await _mediator.Send(new GetAllNotificationsQuery(userIdClaim.Value));
             return Ok(notifications);
         }
+
+        [HttpPut("mark-as-read/{id}")]
+        public async Task<IActionResult> MarkAsRead(Guid id)
+        {
+            var result = await _mediator.Send(new MarkAsReadCommand(id));
+
+            return result ? Ok("Marked as read") : NotFound("Notification not found");
+        }
+
     }
 }

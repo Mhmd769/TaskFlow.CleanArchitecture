@@ -15,6 +15,7 @@ using TaskFlow.Application.Common;
 using TaskFlow.Application.Mappings;
 using TaskFlow.Domain.Interfaces;
 using TaskFlow.Infrastructure.Messaging;
+using TaskFlow.Infrastructure.Notifications;
 using TaskFlow.Infrastructure.Persistence;
 using TaskFlow.Infrastructure.Repositories;
 using TaskFlow.Infrastructure.security;
@@ -84,6 +85,13 @@ builder.Services.AddStackExchangeRedisCache(options =>
 
 builder.Services.AddScoped<ICacheService, RedisCacheService>();
 
+// 1️⃣ Add SignalR
+builder.Services.AddSignalR();
+
+// 2️⃣ Register your NotificationService (that uses IHubContext)
+builder.Services.AddScoped<INotificationService, NotificationService>();
+
+
 // =======================================
 // 🔹 Unit of Work
 // =======================================
@@ -140,15 +148,35 @@ builder.Services.AddAuthentication(options =>
 })
 .AddJwtBearer(options =>
 {
-    options.TokenValidationParameters = new TokenValidationParameters
+options.TokenValidationParameters = new TokenValidationParameters
+{
+    ValidateIssuer = true,
+    ValidateAudience = true,
+    ValidateLifetime = true,
+    ValidateIssuerSigningKey = true,
+    ValidIssuer = jwtSettings.Issuer,
+    ValidAudience = jwtSettings.Audience,
+    IssuerSigningKey = new SymmetricSecurityKey(key)
+};
+    // 🔥🔥 IMPORTANT: Allow JWT tokens in WebSockets
+    options.Events = new JwtBearerEvents
     {
-        ValidateIssuer = true,
-        ValidateAudience = true,
-        ValidateLifetime = true,
-        ValidateIssuerSigningKey = true,
-        ValidIssuer = jwtSettings.Issuer,
-        ValidAudience = jwtSettings.Audience,
-        IssuerSigningKey = new SymmetricSecurityKey(key)
+        OnMessageReceived = context =>
+        {
+            // Allow the token in query string for SignalR
+            var accessToken = context.Request.Query["access_token"];
+
+            var path = context.HttpContext.Request.Path;
+
+            // Check if the request is for your hub
+            if (!string.IsNullOrEmpty(accessToken) &&
+                path.StartsWithSegments("/hubs/notifications"))
+            {
+                context.Token = accessToken;
+            }
+
+            return Task.CompletedTask;
+        }
     };
 });
 
@@ -171,7 +199,8 @@ builder.Services.AddCors(options =>
     options.AddDefaultPolicy(policy =>
         policy.WithOrigins("http://localhost:5173")
               .AllowAnyHeader()
-              .AllowAnyMethod());
+              .AllowAnyMethod()
+              .AllowCredentials());
 });
 
 
@@ -200,6 +229,9 @@ app.UseAuthorization();
 app.UseCors();
 
 app.MapControllers();
+
+app.MapHub<NotificationHub>("/hubs/notifications");
+
 
 // ✅ Redirect root URL to Swagger UI
 app.MapGet("/", () => Results.Redirect("/swagger"));

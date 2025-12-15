@@ -222,11 +222,11 @@ app.UseMiddleware<ExceptionMiddleware>();
 
 app.UseHttpsRedirection();
 
-// ✅ Important Order
+// ✅ Important Order: CORS before auth for preflight and SignalR
+app.UseCors();
 app.UseAuthentication();
 app.UseAuthorization();
-
-app.UseCors();
+// Ensure SignalR also respects CORS (map after middleware setup)
 
 app.MapControllers();
 

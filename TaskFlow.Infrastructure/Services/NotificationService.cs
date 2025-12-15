@@ -21,9 +21,19 @@ namespace TaskFlow.Infrastructure.Services
 
         public async Task SendNotificationToUser(string userId, Notification notification)
         {
-            // Save to database as usual
-            await _hub.Clients.Group(userId).SendAsync("ReceiveNotification", notification);
+            await _hub.Clients
+                .User(userId)
+                .SendAsync("ReceiveNotification", new
+                {
+                    id = notification.Id,
+                    userId = notification.UserId,
+                    message = notification.Message,
+                    link = notification.Link,
+                    isRead = notification.IsRead,
+                    createdAt = notification.CreatedAt
+                });
         }
     }
+
 
 }

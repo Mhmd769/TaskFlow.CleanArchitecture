@@ -9,29 +9,44 @@ using TaskFlow.Domain.Interfaces;
 
 namespace TaskFlow.Application.Features.Notifications.commad
 {
-    public class CreateNotificationHandler : IRequestHandler<CreateNotificationCommand, Guid>
+    public class CreateNotificationCommandHandler
+        : IRequestHandler<CreateNotificationCommand, Guid>
     {
         private readonly INotificationRepository _repo;
+        private readonly INotificationService _notificationService;
 
-        public CreateNotificationHandler(INotificationRepository repo)
+        public CreateNotificationCommandHandler(
+            INotificationRepository repo,
+            INotificationService notificationService)
         {
             _repo = repo;
+            _notificationService = notificationService;
         }
 
-        public async Task<Guid> Handle(CreateNotificationCommand request, CancellationToken cancellationToken)
+        public async Task<Guid> Handle(CreateNotificationCommand request, CancellationToken ct)
         {
-            var notif = new Notification
+            var notification = new Notification
             {
+                Id = Guid.NewGuid(),
                 UserId = request.UserId,
                 Message = request.Message,
-                Link = request.Link
+                Link = request.Link,
+                IsRead = false,
+                CreatedAt = DateTime.UtcNow
             };
 
-            await _repo.AddRangeAsync((IEnumerable<Notification>)notif);
+            await _repo.AddRangeAsync(new[] { notification });
             await _repo.SaveAsync();
 
-            return notif.Id;
+            // 🔥 THIS IS WHAT YOU WERE MISSING
+            await _notificationService.SendNotificationToUser(
+                request.UserId,
+                notification
+            );
+
+            return notification.Id;
         }
     }
+
 
 }

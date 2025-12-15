@@ -12,15 +12,15 @@ namespace TaskFlow.Infrastructure.Notifications
 {
     public class NotificationHub : Hub
     {
-        public override async Task OnConnectedAsync()
-        {
-            var userId = Context.User?.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+        //public override async Task OnConnectedAsync()
+        //{
+        //    var userId = Context.User?.FindFirst(ClaimTypes.NameIdentifier)?.Value;
 
-            if (userId != null)
-                await Groups.AddToGroupAsync(Context.ConnectionId, userId);
+        //    if (userId != null)
+        //        await Groups.AddToGroupAsync(Context.ConnectionId, userId);
 
-            await base.OnConnectedAsync();
-        }
+        //    await base.OnConnectedAsync();
+        //}
     }
 
 }

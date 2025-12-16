@@ -18,6 +18,10 @@ namespace TaskFlow.Infrastructure.Persistence
         public DbSet<Notification> Notifications => Set<Notification>();
 
 
+        public DbSet<Message> Messages => Set<Message>();
+        public DbSet<Conversation> Conversations => Set<Conversation>();
+
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
@@ -56,6 +60,31 @@ namespace TaskFlow.Infrastructure.Persistence
             modelBuilder.Entity<User>()
                 .Property(u => u.Role)
                 .HasConversion<string>();
+
+
+            // Message config
+            modelBuilder.Entity<Message>(entity =>
+            {
+                entity.HasKey(m => m.Id);
+
+                entity.Property(m => m.Content)
+                      .IsRequired()
+                      .HasMaxLength(2000);
+
+                entity.HasIndex(m => new { m.SenderId, m.ReceiverId });
+                entity.HasIndex(m => m.CreatedAt);
+            });
+
+            // Conversation config
+            modelBuilder.Entity<Conversation>(entity =>
+            {
+                entity.HasKey(c => c.Id);
+
+                entity.HasIndex(c => new { c.User1Id, c.User2Id })
+                      .IsUnique();
+
+                entity.HasIndex(c => c.LastMessageAt);
+            });
         }
     }
 }

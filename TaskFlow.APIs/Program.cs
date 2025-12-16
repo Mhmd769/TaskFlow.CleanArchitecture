@@ -131,7 +131,10 @@ builder.Services.AddScoped<IPasswordHasher, PasswordHasher>();
 
 builder.Services.AddScoped<INotificationRepository, NotificationRepository>();
 
+builder.Services.AddScoped<IMessageRepository, MessageRepository>();
 
+builder.Services.AddScoped< IConversationRepository, ConversationRepository>();
+builder.Services.AddScoped<IChatNotificationService, ChatNotificationService>();
 
 builder.Services.AddScoped<IEmailService, SmtpEmailService>();
 
@@ -163,14 +166,14 @@ options.TokenValidationParameters = new TokenValidationParameters
     {
         OnMessageReceived = context =>
         {
-            // Allow the token in query string for SignalR
+            // Allow the token in query string for SignalR hubs
             var accessToken = context.Request.Query["access_token"];
-
             var path = context.HttpContext.Request.Path;
 
-            // Check if the request is for your hub
+            // Apply for both notifications hub and chat hub
             if (!string.IsNullOrEmpty(accessToken) &&
-                path.StartsWithSegments("/hubs/notifications"))
+                (path.StartsWithSegments("/hubs/notifications") ||
+                 path.StartsWithSegments("/hubs/chat")))
             {
                 context.Token = accessToken;
             }
@@ -231,6 +234,7 @@ app.UseAuthorization();
 app.MapControllers();
 
 app.MapHub<NotificationHub>("/hubs/notifications");
+app.MapHub<ChatHub>("/hubs/chat");
 
 
 // ✅ Redirect root URL to Swagger UI
